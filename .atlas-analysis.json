@@ -1,0 +1,193 @@
+{
+  "projectType": "api-service",
+  "projectName": "Furniture API",
+  "projectDescription": "REST API for managing furniture catalog, inventory, and e-commerce operations with Spring Boot and PostgreSQL",
+  "theme": "mint",
+  "primaryColor": "#8B5A3C",
+  "lightColor": "#A67C52",
+  "darkColor": "#6B4423",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Setup & Configuration",
+            "pages": [
+              "setup/database",
+              "setup/docker",
+              "setup/environment"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/architecture",
+              "concepts/data-model",
+              "concepts/authentication"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "api/overview",
+              "api/errors"
+            ]
+          },
+          {
+            "group": "Products",
+            "pages": [
+              "api/products/overview",
+              "api/products/list",
+              "api/products/get",
+              "api/products/create",
+              "api/products/update",
+              "api/products/delete",
+              "api/products/search"
+            ]
+          },
+          {
+            "group": "Categories",
+            "pages": [
+              "api/categories/overview",
+              "api/categories/list",
+              "api/categories/get",
+              "api/categories/create",
+              "api/categories/update",
+              "api/categories/delete",
+              "api/categories/search"
+            ]
+          },
+          {
+            "group": "Inventory",
+            "pages": [
+              "api/inventory/overview",
+              "api/inventory/list",
+              "api/inventory/get",
+              "api/inventory/create",
+              "api/inventory/update",
+              "api/inventory/delete"
+            ]
+          },
+          {
+            "group": "Suppliers",
+            "pages": [
+              "api/suppliers/overview",
+              "api/suppliers/list",
+              "api/suppliers/get",
+              "api/suppliers/create",
+              "api/suppliers/update",
+              "api/suppliers/delete",
+              "api/suppliers/search"
+            ]
+          },
+          {
+            "group": "Product Images",
+            "pages": [
+              "api/product-images/overview",
+              "api/product-images/list",
+              "api/product-images/get",
+              "api/product-images/create",
+              "api/product-images/update",
+              "api/product-images/delete"
+            ]
+          },
+          {
+            "group": "Product Dimensions",
+            "pages": [
+              "api/product-dimensions/overview",
+              "api/product-dimensions/list",
+              "api/product-dimensions/get",
+              "api/product-dimensions/create",
+              "api/product-dimensions/update",
+              "api/product-dimensions/delete"
+            ]
+          },
+          {
+            "group": "Product Reviews",
+            "pages": [
+              "api/product-reviews/overview",
+              "api/product-reviews/list",
+              "api/product-reviews/get",
+              "api/product-reviews/create",
+              "api/product-reviews/update",
+              "api/product-reviews/delete",
+              "api/product-reviews/search"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "RESTful API with comprehensive CRUD operations",
+    "Product catalog management with categories and hierarchies",
+    "Inventory tracking and stock management",
+    "Product reviews and ratings system",
+    "Supplier management",
+    "Product images and dimensions support",
+    "PostgreSQL database with JPA/Hibernate",
+    "OpenAPI/Swagger documentation",
+    "Docker containerization",
+    "Eureka service discovery integration",
+    "Pagination and search capabilities"
+  ],
+  "publicApiSurface": [
+    "GET /api/v1/products",
+    "GET /api/v1/products/{id}",
+    "POST /api/v1/products",
+    "PUT /api/v1/products/{id}",
+    "DELETE /api/v1/products/{id}",
+    "GET /api/v1/products/search/sku/{sku}",
+    "GET /api/v1/products/active",
+    "GET /api/v1/products/category/{categoryId}",
+    "GET /api/v1/products/search/name/{name}",
+    "GET /api/v1/products/price-range",
+    "GET /api/v1/categories",
+    "GET /api/v1/categories/{id}",
+    "POST /api/v1/categories",
+    "PUT /api/v1/categories/{id}",
+    "DELETE /api/v1/categories/{id}",
+    "GET /api/v1/categories/search/name/{name}",
+    "GET /api/v1/categories/active",
+    "GET /api/v1/categories/main",
+    "GET /api/v1/categories/parent/{parentId}",
+    "GET /api/v1/inventory",
+    "GET /api/v1/inventory/{id}",
+    "POST /api/v1/inventory",
+    "PUT /api/v1/inventory/{id}",
+    "DELETE /api/v1/inventory/{id}",
+    "GET /api/v1/suppliers",
+    "GET /api/v1/suppliers/{id}",
+    "POST /api/v1/suppliers",
+    "PUT /api/v1/suppliers/{id}",
+    "DELETE /api/v1/suppliers/{id}",
+    "GET /api/v1/product-images",
+    "GET /api/v1/product-images/{id}",
+    "POST /api/v1/product-images",
+    "PUT /api/v1/product-images/{id}",
+    "DELETE /api/v1/product-images/{id}",
+    "GET /api/v1/product-dimensions",
+    "GET /api/v1/product-dimensions/{id}",
+    "POST /api/v1/product-dimensions",
+    "PUT /api/v1/product-dimensions/{id}",
+    "DELETE /api/v1/product-dimensions/{id}",
+    "GET /api/v1/product-reviews",
+    "GET /api/v1/product-reviews/{id}",
+    "POST /api/v1/product-reviews",
+    "PUT /api/v1/product-reviews/{id}",
+    "DELETE /api/v1/product-reviews/{id}"
+  ]
+}
