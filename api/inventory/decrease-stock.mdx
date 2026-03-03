@@ -1,0 +1,65 @@
+---
+title: 'Decrease Stock'
+description: 'Decrease the available stock quantity for a product'
+---
+
+## PUT /api/v1/inventory/decrease-stock
+
+Decrease the available stock quantity for a specific product. This operation is typically used when processing sales or shipments.
+
+## Query Parameters
+
+<ParamField query="productId" type="integer" required>
+  The unique identifier of the product
+</ParamField>
+
+<ParamField query="quantity" type="integer" required>
+  The quantity to decrease from the available stock
+</ParamField>
+
+## Example Request
+
+```bash
+curl -X PUT "https://api.example.com/api/v1/inventory/decrease-stock?productId=101&quantity=5"
+```
+
+## Response
+
+Returns no content on success.
+
+## Status Codes
+
+<ResponseField name="200" type="OK">
+  Stock decreased successfully
+</ResponseField>
+
+<ResponseField name="400" type="Bad Request">
+  Insufficient stock available for the requested quantity
+</ResponseField>
+
+<ResponseField name="404" type="Not Found">
+  Inventory record not found for the specified product
+</ResponseField>
+
+## Business Rules
+
+<Warning>
+  The operation will fail if the requested quantity exceeds the available stock. The API prevents negative inventory values.
+</Warning>
+
+<Info>
+  If the quantity decrease would bring the stock below the minimum stock level, the operation will still succeed but may trigger low-stock alerts in your monitoring system.
+</Info>
+
+## Example Error Response
+
+When insufficient stock is available:
+
+```json
+{
+  "timestamp": "2026-03-03T10:30:00",
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Insufficient stock. Available: 3, Requested: 5"
+}
+```

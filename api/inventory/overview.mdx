@@ -29,11 +29,23 @@ The Inventory resource allows you to manage furniture inventory records, includi
 
 ## Available Endpoints
 
+### CRUD Operations
 - [List all inventory records](/api/inventory/list) - `GET /api/v1/inventory`
 - [Get inventory record](/api/inventory/get) - `GET /api/v1/inventory/{id}`
 - [Create inventory record](/api/inventory/create) - `POST /api/v1/inventory`
 - [Update inventory record](/api/inventory/update) - `PUT /api/v1/inventory/{id}`
 - [Delete inventory record](/api/inventory/delete) - `DELETE /api/v1/inventory/{id}`
+
+### Stock Operations
+- [Decrease stock](/api/inventory/decrease-stock) - `PUT /api/v1/inventory/decrease-stock`
+
+### Filtering & Search
+The [list endpoint](/api/inventory/list) supports multiple filters:
+- `GET /api/v1/inventory/product/{productId}` - Get inventory by product
+- `GET /api/v1/inventory/low-stock` - Get low stock items
+- `GET /api/v1/inventory/out-of-stock` - Get out of stock items
+- `GET /api/v1/inventory/available` - Get available stock
+- `GET /api/v1/inventory/pagination` - List with pagination
 
 ## Common Use Cases
 

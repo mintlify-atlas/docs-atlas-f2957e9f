@@ -1,22 +1,19 @@
 ---
 title: 'List Inventory Records'
-description: 'Retrieve a list of all inventory records'
+description: 'Retrieve inventory records with various filtering and pagination options'
 ---
 
-## GET /api/v1/inventory
+## List All Inventory
+
+### GET /api/v1/inventory
 
 Retrieve a list of all inventory records in the system.
 
-### Request
-
-No parameters required.
-
 ```bash
-curl -X GET https://api.example.com/api/v1/inventory \
-  -H "Content-Type: application/json"
+curl -X GET https://api.example.com/api/v1/inventory
 ```
 
-### Response
+#### Response
 
 <ResponseField name="data" type="array">
   Array of inventory records
@@ -42,7 +39,87 @@ curl -X GET https://api.example.com/api/v1/inventory \
   </ResponseField>
 </ResponseField>
 
-### Response Example
+---
+
+## Get Inventory by Product
+
+### GET /api/v1/inventory/product/{productId}
+
+Retrieve the inventory record for a specific product.
+
+<ParamField path="productId" type="integer" required>
+  The unique identifier of the product
+</ParamField>
+
+```bash
+curl -X GET https://api.example.com/api/v1/inventory/product/101
+```
+
+---
+
+## Get Low Stock Items
+
+### GET /api/v1/inventory/low-stock
+
+Retrieve all inventory records where quantity is at or below the minimum stock level.
+
+```bash
+curl -X GET https://api.example.com/api/v1/inventory/low-stock
+```
+
+<Note>
+  This endpoint returns items where `quantityAvailable <= minimumStockLevel`
+</Note>
+
+---
+
+## Get Out of Stock Items
+
+### GET /api/v1/inventory/out-of-stock
+
+Retrieve all inventory records where quantity is zero.
+
+```bash
+curl -X GET https://api.example.com/api/v1/inventory/out-of-stock
+```
+
+---
+
+## Get Available Stock
+
+### GET /api/v1/inventory/available
+
+Retrieve all inventory records with available stock (quantity > 0).
+
+```bash
+curl -X GET https://api.example.com/api/v1/inventory/available
+```
+
+---
+
+## List with Pagination
+
+### GET /api/v1/inventory/pagination
+
+Retrieve inventory records with pagination support.
+
+<ParamField query="page" type="integer" default="0">
+  The page number to retrieve (zero-based)
+</ParamField>
+
+<ParamField query="pageSize" type="integer" default="10">
+  The number of records per page
+</ParamField>
+
+```bash
+curl -X GET "https://api.example.com/api/v1/inventory/pagination?page=0&pageSize=20"
+```
+
+---
+
+## Response Example
+
+All list endpoints return an array of inventory records:
 
 ```json
 [
@@ -63,6 +140,7 @@ curl -X GET https://api.example.com/api/v1/inventory \
 ]
 ```
 
-### Status Codes
+## Status Codes
 
 - `200` - Success
+- `404` - Inventory record not found (for product-specific queries)

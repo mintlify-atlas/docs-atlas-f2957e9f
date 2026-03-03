@@ -90,7 +90,8 @@
               "api/inventory/get",
               "api/inventory/create",
               "api/inventory/update",
-              "api/inventory/delete"
+              "api/inventory/delete",
+              "api/inventory/decrease-stock"
             ]
           },
           {
