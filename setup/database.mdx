@@ -1,0 +1,217 @@
+---
+title: "Database Configuration"
+description: "Configure PostgreSQL database connection for the Furniture API"
+---
+
+The Furniture API uses PostgreSQL as its database, with Spring Data JPA for object-relational mapping. This guide covers database setup and configuration.
+
+## Prerequisites
+
+Before configuring the database, ensure you have:
+
+- PostgreSQL 12 or higher installed
+- A PostgreSQL database created
+- Database credentials (username, password, host, port)
+
+## Database Configuration
+
+### Connection Settings
+
+The application connects to PostgreSQL using JDBC. Configure the connection in `application.properties`:
+
+```properties
+# Database Connection
+spring.datasource.url=jdbc:postgresql://localhost:5432/catalog_and_inventory_db
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+```
+
+<Note>
+The connection URL follows the format: `jdbc:postgresql://[host]:[port]/[database_name]`
+</Note>
+
+### Connection URL Parameters
+
+For secure connections (recommended for production), add SSL parameters:
+
+```properties
+spring.datasource.url=jdbc:postgresql://your-host:5432/catalog_and_inventory_db?user=username&password=password&sslmode=require&channelBinding=require
+```
+
+<Warning>
+Never commit database credentials directly in `application.properties`. Use environment variables or external configuration for production deployments.
+</Warning>
+
+## JPA and Hibernate Configuration
+
+### Schema Management
+
+The application is configured to not auto-generate database schemas:
+
+```properties
+spring.jpa.hibernate.ddl-auto=none
+```
+
+<Info>
+Valid options for `ddl-auto`:
+- `none` - No schema generation (recommended for production)
+- `validate` - Validate schema, make no changes
+- `update` - Update schema if needed
+- `create` - Create schema, destroying previous data
+- `create-drop` - Create schema, drop on application shutdown
+</Info>
+
+### Naming Strategy
+
+The application uses standard naming conventions for database tables and columns:
+
+```properties
+spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+```
+
+This preserves entity and field names as-is without converting to snake_case.
+
+### Open Session in View
+
+To prevent lazy loading issues and improve performance:
+
+```properties
+spring.jpa.open-in-view=false
+```
+
+<Note>
+Disabling Open Session in View forces you to fetch all required data within the transaction boundary, which is a best practice for production applications.
+</Note>
+
+## Environment-Specific Configuration
+
+<Steps>
+  <Step title="Create environment profiles">
+    Create separate property files for each environment:
+    - `application-dev.properties` for development
+    - `application-test.properties` for testing
+    - `application-prod.properties` for production
+  </Step>
+  
+  <Step title="Configure database credentials">
+    Use environment variables for sensitive data:
+    
+    ```properties
+    spring.datasource.url=jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    spring.datasource.username=${DB_USERNAME}
+    spring.datasource.password=${DB_PASSWORD}
+    ```
+  </Step>
+  
+  <Step title="Activate profile">
+    Set the active profile using:
+    
+    ```bash
+    # Via command line
+    java -jar furniture-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
+    
+    # Via environment variable
+    export SPRING_PROFILES_ACTIVE=prod
+    ```
+  </Step>
+</Steps>
+
+## Complete Configuration Example
+
+<CodeGroup>
+
+```properties Development
+# application-dev.properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/catalog_and_inventory_db
+spring.datasource.username=dev_user
+spring.datasource.password=dev_password
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+```
+
+```properties Production
+# application-prod.properties
+spring.datasource.url=jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=require&channelBinding=require
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.show-sql=false
+```
+
+```yaml Docker Compose
+# Example using environment variables in compose.yaml
+services:
+  server:
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=catalog_and_inventory_db
+      - DB_USERNAME=postgres
+      - DB_PASSWORD_FILE=/run/secrets/db-password
+```
+
+</CodeGroup>
+
+## Database Dependencies
+
+The following dependencies are required in `pom.xml`:
+
+```xml
+<!-- Spring Data JPA -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+
+<!-- PostgreSQL Driver -->
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <scope>runtime</scope>
+</dependency>
+```
+
+## Connection Pool Configuration
+
+For production environments, configure connection pooling:
+
+```properties
+# HikariCP Configuration (default in Spring Boot)
+spring.datasource.hikari.maximum-pool-size=10
+spring.datasource.hikari.minimum-idle=5
+spring.datasource.hikari.connection-timeout=20000
+spring.datasource.hikari.idle-timeout=300000
+spring.datasource.hikari.max-lifetime=1200000
+```
+
+## Troubleshooting
+
+### Connection Refused
+
+If you encounter connection errors:
+
+1. Verify PostgreSQL is running: `systemctl status postgresql`
+2. Check if the port is correct (default: 5432)
+3. Ensure the database exists: `psql -l`
+4. Verify firewall rules allow connections
+
+### SSL Connection Issues
+
+For SSL-related errors:
+
+```properties
+# Disable SSL for local development
+spring.datasource.url=jdbc:postgresql://localhost:5432/catalog_and_inventory_db?sslmode=disable
+```
+
+<Warning>
+Only disable SSL for local development. Always use SSL in production environments.
+</Warning>
+
+### Schema Validation Errors
+
+If schema validation fails:
+
+1. Check that database schema matches entity definitions
+2. Verify naming strategy is correct
+3. Consider using `spring.jpa.hibernate.ddl-auto=validate` to identify mismatches

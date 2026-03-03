@@ -1,0 +1,72 @@
+---
+title: 'Create Inventory Record'
+description: 'Create a new inventory record for a product'
+---
+
+## POST /api/v1/inventory
+
+Create a new inventory record for tracking product stock levels.
+
+### Request Body
+
+<ParamField body="productId" type="integer" required>
+  ID of the product to create inventory for
+</ParamField>
+
+<ParamField body="quantityAvailable" type="integer" required>
+  Initial quantity of the product available in stock
+</ParamField>
+
+<ParamField body="minimumStockLevel" type="integer" required>
+  Minimum stock level threshold for low stock alerts
+</ParamField>
+
+### Request
+
+```bash
+curl -X POST https://api.example.com/api/v1/inventory \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": 101,
+    "quantityAvailable": 50,
+    "minimumStockLevel": 10
+  }'
+```
+
+### Response
+
+<ResponseField name="id" type="integer">
+  Unique identifier for the newly created inventory record
+</ResponseField>
+
+<ResponseField name="productId" type="integer">
+  ID of the associated product
+</ResponseField>
+
+<ResponseField name="quantityAvailable" type="integer">
+  Current quantity of the product available in stock
+</ResponseField>
+
+<ResponseField name="minimumStockLevel" type="integer">
+  Minimum stock level threshold for low stock alerts
+</ResponseField>
+
+<ResponseField name="lastRestockedDate" type="string">
+  Timestamp of when the inventory was last restocked (ISO 8601 format)
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "id": 1,
+  "productId": 101,
+  "quantityAvailable": 50,
+  "minimumStockLevel": 10,
+  "lastRestockedDate": "2026-03-03T09:15:00"
+}
+```
+
+### Status Codes
+
+- `201` - Inventory record created successfully

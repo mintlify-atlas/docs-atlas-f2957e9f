@@ -1,0 +1,209 @@
+---
+title: System Architecture
+description: Overview of the Furniture API microservice architecture built with Spring Boot, PostgreSQL, and Netflix Eureka service discovery
+---
+
+## Overview
+
+The Furniture API is a microservice-based REST API built with Spring Boot 3.5.7 and Java 21. It follows a cloud-native architecture pattern with service discovery, enabling scalable and distributed furniture catalog and inventory management.
+
+## Technology Stack
+
+### Core Framework
+- **Spring Boot 3.5.7** - Main application framework
+- **Java 21** - Programming language runtime
+- **Maven** - Dependency management and build tool
+
+### Data Layer
+- **PostgreSQL** - Primary relational database hosted on Neon (AWS us-east-1)
+- **Spring Data JPA** - Data access abstraction
+- **Hibernate** - ORM implementation with PostgreSQL dialect
+
+### Cloud & Service Discovery
+- **Netflix Eureka Client** - Service registration and discovery
+- **Spring Cloud 2025.0.0** - Cloud-native application support
+- **Spring Boot Actuator** - Health checks and monitoring endpoints
+
+### API Documentation
+- **SpringDoc OpenAPI** - Automatic API documentation generation
+- **Swagger UI** - Interactive API documentation at `/doc/swagger-ui.html`
+
+### Additional Libraries
+- **Lombok** - Reduces boilerplate code with annotations
+- **ModelMapper 3.2.1** - Object mapping between DTOs and entities
+- **Gson** - JSON serialization/deserialization
+- **Hibernate Validator** - Bean validation
+
+## Architecture Pattern
+
+### Microservice Registration
+
+The application is configured as a microservice with `@EnableDiscoveryClient` annotation in the main application class:
+
+```java
+@SpringBootApplication
+@EnableDiscoveryClient
+public class FurnitureApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(FurnitureApplication.class, args);
+    }
+}
+```
+
+<Info>
+The service registers with Eureka Server at `https://furniture-eureka-server.onrender.com/eureka` and runs on port **8082**.
+</Info>
+
+### Service Discovery Configuration
+
+The application uses Netflix Eureka for service discovery with the following settings:
+
+- **Service Name**: `microservice-rest`
+- **Port**: 8082
+- **Eureka Server**: `https://furniture-eureka-server.onrender.com/eureka`
+- **IP Preference**: Uses IP address instead of hostname
+- **Registry Fetch**: Enabled for client-side load balancing
+- **Registration**: Automatically registers with Eureka on startup
+
+## Database Configuration
+
+### Connection Details
+
+- **Database Type**: PostgreSQL
+- **Database Name**: `catalog_and_inventory_db`
+- **Hosting**: Neon (AWS c-3.us-east-1)
+- **Connection Pool**: Neon pooler for optimized connections
+- **SSL Mode**: Required with channel binding
+
+### JPA Configuration
+
+```properties
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+spring.jpa.open-in-view=false
+```
+
+<Note>
+The `ddl-auto=none` setting means database schema changes are not automatically applied. Schema migrations should be managed separately.
+</Note>
+
+<Warning>
+The application disables Open Session in View pattern (`open-in-view=false`) to prevent lazy loading exceptions. Ensure all required relationships are eagerly fetched or use JOIN FETCH queries.
+</Warning>
+
+## JSON Serialization
+
+The API uses snake_case naming convention for JSON properties:
+
+```properties
+spring.jackson.property-naming-strategy=SNAKE_CASE
+spring.jackson.serialization.fail-on-empty-beans=false
+```
+
+This means all API responses and requests use snake_case field names (e.g., `category_id`, `created_at`) instead of camelCase.
+
+## CORS Configuration
+
+### Cross-Origin Resource Sharing
+
+The API implements CORS to allow cross-origin requests from frontend applications:
+
+```java
+@Configuration
+public class CorsConfig implements WebMvcConfigurer {
+  @Override
+  public void addCorsMappings(CorsRegistry registry) {
+    registry.addMapping("/api/**")
+        .allowedOrigins("https://tu-frontend.com")
+        .allowedMethods("GET","POST","PUT","DELETE","PATCH","OPTIONS")
+        .allowedHeaders("*");
+  }
+}
+```
+
+<Info>
+CORS is configured for `/api/**` endpoints only. Requests from `https://tu-frontend.com` are allowed with standard HTTP methods.
+</Info>
+
+<Warning>
+The production configuration uses a specific origin instead of wildcard (`*`) for security. Credentials are not allowed by default.
+</Warning>
+
+## API Documentation
+
+Swagger UI is automatically generated and available at:
+
+```
+http://localhost:8082/doc/swagger-ui.html
+```
+
+Configuration:
+- API docs enabled at `/v3/api-docs`
+- Auto-scans `com.api.furniture` package for endpoints
+- Interactive documentation for testing endpoints
+
+## Deployment Architecture
+
+### Service Components
+
+1. **Eureka Server** - Service registry hosted on Render
+2. **Furniture API Microservice** - This application (port 8082)
+3. **PostgreSQL Database** - Hosted on Neon cloud
+4. **Frontend Application** - Consumes the API (tu-frontend.com)
+
+### Communication Flow
+
+```
+┌──────────────┐         ┌──────────────┐
+│   Frontend   │◄───────►│ Furniture API│
+│ tu-frontend  │  CORS   │  Port 8082   │
+└──────────────┘         └──────┬───────┘
+                                │
+                    ┌───────────┼───────────┐
+                    │           │           │
+                    ▼           ▼           ▼
+              ┌──────────┐ ┌────────┐ ┌─────────┐
+              │  Eureka  │ │  Neon  │ │ Swagger │
+              │  Server  │ │  DB    │ │   UI    │
+              └──────────┘ └────────┘ └─────────┘
+```
+
+## Monitoring & Health
+
+Spring Boot Actuator provides monitoring endpoints for:
+
+- Application health checks
+- Metrics collection
+- Service status for Eureka
+- Application info
+
+<Expandable title="View actuator endpoints">
+  
+Common actuator endpoints:
+
+- `/actuator/health` - Application health status
+- `/actuator/info` - Application information
+- `/actuator/metrics` - Application metrics
+- `/actuator/env` - Environment properties
+
+</Expandable>
+
+## Build & Packaging
+
+The application is packaged as an executable JAR file using Maven:
+
+```xml
+<packaging>jar</packaging>
+```
+
+### Build Configuration
+
+- **Compiler**: Maven compiler plugin with Lombok annotation processing
+- **Spring Boot Plugin**: Creates executable JAR with embedded Tomcat
+- **Java Version**: 21
+- **Tomcat**: Embedded server (provided scope)
+
+<Note>
+Lombok is excluded from the final JAR as it's only needed during compilation for generating boilerplate code.
+</Note>

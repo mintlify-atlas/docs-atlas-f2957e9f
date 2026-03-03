@@ -1,0 +1,160 @@
+---
+title: Update Product
+description: Update an existing product's information
+---
+
+## Endpoint
+
+```
+PUT /api/v1/products/{id}
+```
+
+Updates an existing product with new information.
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the product to update
+</ParamField>
+
+## Request Body
+
+<ParamField body="name" type="string" required>
+  The name of the product
+</ParamField>
+
+<ParamField body="description" type="string" required>
+  Detailed description of the product
+</ParamField>
+
+<ParamField body="sku" type="string" required>
+  Stock Keeping Unit identifier
+</ParamField>
+
+<ParamField body="category_id" type="integer" required>
+  ID of the category this product belongs to
+</ParamField>
+
+<ParamField body="price" type="number" required>
+  Selling price of the product
+</ParamField>
+
+<ParamField body="cost_price" type="number" required>
+  Cost price of the product
+</ParamField>
+
+<ParamField body="weight_kg" type="number" required>
+  Weight of the product in kilograms
+</ParamField>
+
+<ParamField body="is_active" type="boolean" required>
+  Whether the product is active and available for sale
+</ParamField>
+
+## Response
+
+Returns the updated product object with all fields.
+
+<ResponseField name="id" type="integer">
+  Unique identifier for the product
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The name of the product
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Detailed description of the product
+</ResponseField>
+
+<ResponseField name="sku" type="string">
+  Stock Keeping Unit identifier
+</ResponseField>
+
+<ResponseField name="category_id" type="integer">
+  ID of the product's category
+</ResponseField>
+
+<ResponseField name="price" type="number">
+  Selling price of the product
+</ResponseField>
+
+<ResponseField name="cost_price" type="number">
+  Cost price of the product
+</ResponseField>
+
+<ResponseField name="weight_kg" type="number">
+  Weight in kilograms
+</ResponseField>
+
+<ResponseField name="is_active" type="boolean">
+  Whether the product is active
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  Original creation timestamp in ISO 8601 format
+</ResponseField>
+
+<ResponseField name="product_dimension_id" type="integer">
+  ID of the associated product dimensions record
+</ResponseField>
+
+<ResponseField name="product_inventory_id" type="integer">
+  ID of the associated inventory record
+</ResponseField>
+
+<ResponseField name="image_ids" type="array">
+  List of image IDs associated with this product
+</ResponseField>
+
+## Example
+
+```bash
+curl -X PUT "https://api.furniture.com/api/v1/products/1" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "name": "Modern Oak Dining Table - Updated",
+    "description": "Elegant 8-seater dining table made from solid oak wood with premium finish",
+    "sku": "TBL-OAK-001",
+    "category_id": 5,
+    "price": 999.99,
+    "cost_price": 475.00,
+    "weight_kg": 50.0,
+    "is_active": true
+  }'
+```
+
+### Response Example
+
+```json
+{
+  "id": 1,
+  "name": "Modern Oak Dining Table - Updated",
+  "description": "Elegant 8-seater dining table made from solid oak wood with premium finish",
+  "sku": "TBL-OAK-001",
+  "category_id": 5,
+  "price": 999.99,
+  "cost_price": 475.00,
+  "weight_kg": 50.0,
+  "is_active": true,
+  "created_at": "2024-01-15T10:30:00",
+  "product_dimension_id": 1,
+  "product_inventory_id": 1,
+  "image_ids": [101, 102, 103]
+}
+```
+
+## Response Codes
+
+<ResponseField name="200" type="Success">
+  Product updated successfully
+</ResponseField>
+
+<ResponseField name="404" type="Error">
+  Product not found with the specified ID
+</ResponseField>
+
+<ResponseField name="400" type="Error">
+  Invalid request body or validation errors
+</ResponseField>

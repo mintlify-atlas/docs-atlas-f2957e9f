@@ -1,0 +1,85 @@
+---
+title: Suppliers
+description: Manage supplier information for the furniture inventory system
+---
+
+The Suppliers API allows you to manage supplier information, including contact details and active status. Suppliers are companies or individuals who provide furniture products to your inventory.
+
+## Base URL
+
+All supplier endpoints are relative to:
+
+```
+/api/v1/suppliers
+```
+
+## Resource Overview
+
+The Supplier resource contains the following information:
+
+<ResponseField name="id" type="integer" required>
+  Unique identifier for the supplier
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  Name of the supplier company or individual
+</ResponseField>
+
+<ResponseField name="contactEmail" type="string" required>
+  Contact email address for the supplier
+</ResponseField>
+
+<ResponseField name="contactPhone" type="string" required>
+  Contact phone number for the supplier
+</ResponseField>
+
+<ResponseField name="isActive" type="boolean" required>
+  Indicates whether the supplier is currently active
+</ResponseField>
+
+## Available Endpoints
+
+### Core Operations
+
+- [List all suppliers](/api/suppliers/list) - `GET /api/v1/suppliers`
+- [Get supplier by ID](/api/suppliers/get) - `GET /api/v1/suppliers/{id}`
+- [Create a supplier](/api/suppliers/create) - `POST /api/v1/suppliers`
+- [Update a supplier](/api/suppliers/update) - `PUT /api/v1/suppliers/{id}`
+- [Delete a supplier](/api/suppliers/delete) - `DELETE /api/v1/suppliers/{id}`
+
+### Search Operations
+
+- [Search suppliers](/api/suppliers/search) - Multiple search endpoints available
+
+## Common Use Cases
+
+### Adding a New Supplier
+
+When onboarding a new supplier, use the create endpoint with their contact information:
+
+```bash
+curl -X POST https://api.example.com/api/v1/suppliers \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Premium Furniture Co.",
+    "contactEmail": "sales@premiumfurniture.com",
+    "contactPhone": "+1-555-0100",
+    "isActive": true
+  }'
+```
+
+### Finding Active Suppliers
+
+Retrieve only active suppliers for current operations:
+
+```bash
+curl https://api.example.com/api/v1/suppliers/active
+```
+
+### Searching by Name
+
+Find suppliers whose name contains a specific term:
+
+```bash
+curl https://api.example.com/api/v1/suppliers/search/contains/Premium
+```

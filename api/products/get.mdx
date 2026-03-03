@@ -1,0 +1,109 @@
+---
+title: Get Product
+description: Retrieve a single product by its ID
+---
+
+## Endpoint
+
+```
+GET /api/v1/products/{id}
+```
+
+Retrieves detailed information about a specific product.
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the product to retrieve
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="integer">
+  Unique identifier for the product
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The name of the product
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Detailed description of the product
+</ResponseField>
+
+<ResponseField name="sku" type="string">
+  Stock Keeping Unit identifier
+</ResponseField>
+
+<ResponseField name="category_id" type="integer">
+  ID of the product's category
+</ResponseField>
+
+<ResponseField name="price" type="number">
+  Selling price of the product
+</ResponseField>
+
+<ResponseField name="cost_price" type="number">
+  Cost price of the product
+</ResponseField>
+
+<ResponseField name="weight_kg" type="number">
+  Weight in kilograms
+</ResponseField>
+
+<ResponseField name="is_active" type="boolean">
+  Whether the product is active and available for sale
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  Creation timestamp in ISO 8601 format
+</ResponseField>
+
+<ResponseField name="product_dimension_id" type="integer">
+  ID of the associated product dimensions record
+</ResponseField>
+
+<ResponseField name="product_inventory_id" type="integer">
+  ID of the associated inventory record
+</ResponseField>
+
+<ResponseField name="image_ids" type="array">
+  List of image IDs associated with this product
+</ResponseField>
+
+## Example
+
+```bash
+curl -X GET "https://api.furniture.com/api/v1/products/1" \
+  -H "Accept: application/json"
+```
+
+### Response Example
+
+```json
+{
+  "id": 1,
+  "name": "Modern Oak Dining Table",
+  "description": "Elegant 6-seater dining table made from solid oak wood with a smooth finish",
+  "sku": "TBL-OAK-001",
+  "category_id": 5,
+  "price": 899.99,
+  "cost_price": 450.00,
+  "weight_kg": 45.5,
+  "is_active": true,
+  "created_at": "2024-01-15T10:30:00",
+  "product_dimension_id": 1,
+  "product_inventory_id": 1,
+  "image_ids": [101, 102, 103]
+}
+```
+
+## Response Codes
+
+<ResponseField name="200" type="Success">
+  Product found and returned successfully
+</ResponseField>
+
+<ResponseField name="404" type="Error">
+  Product not found with the specified ID
+</ResponseField>

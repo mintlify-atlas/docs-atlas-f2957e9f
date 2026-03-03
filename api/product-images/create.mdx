@@ -1,0 +1,211 @@
+---
+title: "Create Product Image"
+description: "Add a new image to a product"
+---
+
+<RequestExample>
+```bash cURL
+curl -X POST "https://api.example.com/api/v1/product-images" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": 101,
+    "imageUrl": "https://example.com/images/sofa-front.jpg",
+    "altText": "Modern grey sofa - front view",
+    "displayOrder": 1
+  }'
+```
+</RequestExample>
+
+Creates a new product image with the provided details.
+
+## Method and Path
+
+```
+POST /api/v1/product-images
+```
+
+## Request Body
+
+<ParamField body="productId" type="integer" required>
+  ID of the product this image belongs to
+</ParamField>
+
+<ParamField body="imageUrl" type="string" required>
+  URL of the product image. Must be a valid and accessible URL.
+</ParamField>
+
+<ParamField body="altText" type="string">
+  Alternative text description for accessibility. Recommended for SEO and compliance.
+</ParamField>
+
+<ParamField body="displayOrder" type="integer">
+  Order in which the image should be displayed. Lower numbers appear first. If not specified, the image will be added at the end.
+</ParamField>
+
+## Response
+
+<ResponseField name="ProductImageResponse" type="object">
+  The newly created product image object
+  
+  <Expandable title="properties">
+    <ResponseField name="id" type="integer">
+      Unique identifier for the product image (auto-generated)
+    </ResponseField>
+    
+    <ResponseField name="productId" type="integer">
+      ID of the product this image belongs to
+    </ResponseField>
+    
+    <ResponseField name="imageUrl" type="string">
+      URL of the product image
+    </ResponseField>
+    
+    <ResponseField name="altText" type="string">
+      Alternative text description for accessibility
+    </ResponseField>
+    
+    <ResponseField name="displayOrder" type="integer">
+      Order in which the image should be displayed
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Response Codes
+
+<ResponseField name="201" type="Created">
+  Product image successfully created. The response includes a `Location` header with the URL of the new resource.
+</ResponseField>
+
+<ResponseField name="400" type="Bad Request">
+  Invalid request body or validation error
+</ResponseField>
+
+## Request Example
+
+```json
+{
+  "productId": 101,
+  "imageUrl": "https://example.com/images/sofa-front.jpg",
+  "altText": "Modern grey sofa - front view",
+  "displayOrder": 1
+}
+```
+
+## Response Example
+
+```json
+{
+  "id": 1,
+  "productId": 101,
+  "imageUrl": "https://example.com/images/sofa-front.jpg",
+  "altText": "Modern grey sofa - front view",
+  "displayOrder": 1
+}
+```
+
+### Response Headers
+
+```
+HTTP/1.1 201 Created
+Location: /api/v1/product-images/1
+Content-Type: application/json
+```
+
+## Error Response Example
+
+```json
+{
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Validation failed",
+  "errors": [
+    {
+      "field": "productId",
+      "message": "Product ID is required"
+    },
+    {
+      "field": "imageUrl",
+      "message": "Image URL is required"
+    }
+  ]
+}
+```
+
+## Usage Examples
+
+### Create Product Image with All Fields
+
+```bash
+curl -X POST "https://api.example.com/api/v1/product-images" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": 101,
+    "imageUrl": "https://example.com/images/sofa-front.jpg",
+    "altText": "Modern grey sofa - front view",
+    "displayOrder": 1
+  }'
+```
+
+### Create Product Image with Minimal Fields
+
+```bash
+curl -X POST "https://api.example.com/api/v1/product-images" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": 101,
+    "imageUrl": "https://example.com/images/sofa-side.jpg"
+  }'
+```
+
+### Create Product Image with JavaScript
+
+```javascript
+const imageData = {
+  productId: 101,
+  imageUrl: 'https://example.com/images/sofa-front.jpg',
+  altText: 'Modern grey sofa - front view',
+  displayOrder: 1
+};
+
+fetch('https://api.example.com/api/v1/product-images', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(imageData)
+})
+  .then(response => response.json())
+  .then(data => console.log('Created:', data))
+  .catch(error => console.error('Error:', error));
+```
+
+### Create Product Image with Python
+
+```python
+import requests
+
+image_data = {
+    'productId': 101,
+    'imageUrl': 'https://example.com/images/sofa-front.jpg',
+    'altText': 'Modern grey sofa - front view',
+    'displayOrder': 1
+}
+
+response = requests.post(
+    'https://api.example.com/api/v1/product-images',
+    json=image_data
+)
+
+if response.status_code == 201:
+    created_image = response.json()
+    print(f"Created image with ID: {created_image['id']}")
+else:
+    print(f"Error: {response.status_code}")
+```
+
+## Best Practices
+
+- **Image URLs**: Ensure image URLs are accessible and point to optimized images for web display
+- **Alt Text**: Always provide descriptive alt text for better accessibility and SEO
+- **Display Order**: Use consistent increments (e.g., 1, 2, 3) to make reordering easier
+- **Multiple Images**: When adding multiple images for a product, set appropriate display orders to control the sequence

@@ -1,0 +1,160 @@
+---
+title: Update Supplier
+description: Modify an existing supplier's information
+---
+
+Update the details of an existing supplier by its ID.
+
+## Endpoint
+
+```
+PUT /api/v1/suppliers/{id}
+```
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the supplier to update
+</ParamField>
+
+## Request Body
+
+<ParamField body="name" type="string" required>
+  Name of the supplier company or individual
+</ParamField>
+
+<ParamField body="contactEmail" type="string" required>
+  Contact email address for the supplier
+</ParamField>
+
+<ParamField body="contactPhone" type="string" required>
+  Contact phone number for the supplier
+</ParamField>
+
+<ParamField body="isActive" type="boolean" required>
+  Whether the supplier should be marked as active
+</ParamField>
+
+## Response
+
+Returns the updated supplier object.
+
+<ResponseField name="id" type="integer" required>
+  Unique identifier of the supplier
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  Updated name of the supplier
+</ResponseField>
+
+<ResponseField name="contactEmail" type="string" required>
+  Updated contact email address
+</ResponseField>
+
+<ResponseField name="contactPhone" type="string" required>
+  Updated contact phone number
+</ResponseField>
+
+<ResponseField name="isActive" type="boolean" required>
+  Updated active status
+</ResponseField>
+
+## Example Request
+
+```bash
+curl -X PUT https://api.example.com/api/v1/suppliers/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Premium Furniture Co. Ltd.",
+    "contactEmail": "info@premiumfurniture.com",
+    "contactPhone": "+1-555-0150",
+    "isActive": true
+  }'
+```
+
+## Example Response
+
+```json
+{
+  "id": 1,
+  "name": "Premium Furniture Co. Ltd.",
+  "contactEmail": "info@premiumfurniture.com",
+  "contactPhone": "+1-555-0150",
+  "isActive": true
+}
+```
+
+## Status Codes
+
+- `200 OK` - Supplier successfully updated
+- `400 Bad Request` - Invalid request body or validation error
+- `404 Not Found` - Supplier with the specified ID does not exist
+
+## Validation Rules
+
+The following validation rules apply:
+
+- `name` - Must not be empty
+- `contactEmail` - Must be a valid email format
+- `contactPhone` - Must not be empty
+- `isActive` - Must be a boolean value
+
+## Error Responses
+
+### Supplier Not Found
+
+```json
+{
+  "status": 404,
+  "error": "Not Found",
+  "message": "Supplier not found with id: 1"
+}
+```
+
+### Validation Error
+
+```json
+{
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Validation failed",
+  "errors": [
+    {
+      "field": "contactEmail",
+      "message": "must be a valid email address"
+    }
+  ]
+}
+```
+
+## Use Cases
+
+### Deactivating a Supplier
+
+To mark a supplier as inactive without deleting their record:
+
+```bash
+curl -X PUT https://api.example.com/api/v1/suppliers/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Premium Furniture Co.",
+    "contactEmail": "sales@premiumfurniture.com",
+    "contactPhone": "+1-555-0100",
+    "isActive": false
+  }'
+```
+
+### Updating Contact Information
+
+Update only the contact details while keeping other fields the same:
+
+```bash
+curl -X PUT https://api.example.com/api/v1/suppliers/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Premium Furniture Co.",
+    "contactEmail": "newsales@premiumfurniture.com",
+    "contactPhone": "+1-555-0199",
+    "isActive": true
+  }'
+```

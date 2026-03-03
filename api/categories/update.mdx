@@ -1,0 +1,144 @@
+---
+title: Update Category
+description: Update an existing category's information
+---
+
+# Update Category
+
+Update an existing category's information. You can modify any field including the parent category relationship.
+
+## Endpoint
+
+```
+PUT /api/v1/categories/{id}
+```
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the category to update
+</ParamField>
+
+## Request Body
+
+<ParamField body="name" type="string">
+  The category name
+</ParamField>
+
+<ParamField body="description" type="string">
+  Detailed description of the category
+</ParamField>
+
+<ParamField body="parentId" type="integer">
+  ID of the parent category. Set to null to make it a main category
+</ParamField>
+
+<ParamField body="isActive" type="boolean">
+  Whether the category should be active
+</ParamField>
+
+## Response
+
+Returns the updated category object.
+
+<ResponseField name="id" type="integer">
+  Unique identifier for the category
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The category name
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Detailed description of the category
+</ResponseField>
+
+<ResponseField name="parentId" type="integer">
+  ID of the parent category (null for main categories)
+</ResponseField>
+
+<ResponseField name="isActive" type="boolean">
+  Whether the category is currently active
+</ResponseField>
+
+<ResponseField name="product_ids" type="array">
+  List of product IDs associated with this category
+</ResponseField>
+
+<ResponseField name="subcategory_ids" type="array">
+  List of subcategory IDs that belong to this category
+</ResponseField>
+
+## Status Codes
+
+- `200` - Category successfully updated
+- `404` - Category not found
+- `400` - Invalid request body or validation error
+
+## Examples
+
+### Update Category Name and Description
+
+```bash
+curl -X PUT "https://api.example.com/api/v1/categories/1" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Modern Living Room",
+    "description": "Contemporary furniture for modern living spaces",
+    "isActive": true
+  }'
+```
+
+### Response
+
+```json
+{
+  "id": 1,
+  "name": "Modern Living Room",
+  "description": "Contemporary furniture for modern living spaces",
+  "parentId": null,
+  "isActive": true,
+  "product_ids": [101, 102, 103],
+  "subcategory_ids": [10, 11]
+}
+```
+
+### Deactivate a Category
+
+```bash
+curl -X PUT "https://api.example.com/api/v1/categories/10" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Sofas",
+    "description": "Comfortable seating furniture",
+    "parentId": 1,
+    "isActive": false
+  }'
+```
+
+### Response
+
+```json
+{
+  "id": 10,
+  "name": "Sofas",
+  "description": "Comfortable seating furniture",
+  "parentId": 1,
+  "isActive": false,
+  "product_ids": [201, 202],
+  "subcategory_ids": []
+}
+```
+
+### Change Parent Category
+
+```bash
+curl -X PUT "https://api.example.com/api/v1/categories/15" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Office Chairs",
+    "description": "Ergonomic office seating",
+    "parentId": 2,
+    "isActive": true
+  }'
+```

@@ -1,0 +1,132 @@
+---
+title: Furniture API
+description: A comprehensive REST API for managing furniture catalog and inventory with Spring Boot and PostgreSQL
+---
+
+<img
+  className="block dark:hidden"
+  src="/images/hero-light.svg"
+  alt="Hero Light"
+/>
+<img
+  className="hidden dark:block"
+  src="/images/hero-dark.svg"
+  alt="Hero Dark"
+/>
+
+## Welcome to Furniture API
+
+The Furniture API is a production-ready microservice built with Spring Boot 3.5.7 and Java 21, designed to manage furniture products, categories, inventory, suppliers, and product reviews. It provides a complete solution for furniture catalog and inventory management with PostgreSQL database integration.
+
+<CardGroup cols={2}>
+  <Card
+    title="Quick Start"
+    icon="rocket"
+    href="/quickstart"
+  >
+    Get up and running with the Furniture API in minutes using Docker
+  </Card>
+  <Card
+    title="API Reference"
+    icon="code"
+    href="/api/overview"
+  >
+    Explore all available endpoints with interactive Swagger documentation
+  </Card>
+  <Card
+    title="Data Model"
+    icon="database"
+    href="/concepts/data-model"
+  >
+    Understand the database schema and entity relationships
+  </Card>
+  <Card
+    title="Setup Guide"
+    icon="gear"
+    href="/setup/docker"
+  >
+    Configure database, Docker, and environment variables
+  </Card>
+</CardGroup>
+
+## Key Features
+
+<CardGroup cols={3}>
+  <Card title="Product Management" icon="couch">
+    Complete CRUD operations for furniture products with SKU tracking, pricing, dimensions, and multi-image support
+  </Card>
+  <Card title="Category Hierarchy" icon="folder-tree">
+    Organize products with hierarchical categories supporting parent-child relationships
+  </Card>
+  <Card title="Inventory Control" icon="warehouse">
+    Real-time stock tracking with low-stock alerts and automatic inventory updates
+  </Card>
+  <Card title="Supplier Management" icon="truck">
+    Manage supplier information and track product sources
+  </Card>
+  <Card title="Product Reviews" icon="star">
+    Customer review system with ratings and feedback
+  </Card>
+  <Card title="Advanced Search" icon="magnifying-glass">
+    Search products by name, SKU, category, price range with pagination support
+  </Card>
+</CardGroup>
+
+## Technology Stack
+
+The Furniture API is built with modern, enterprise-grade technologies:
+
+- **Spring Boot 3.5.7** - Latest Spring framework for microservices
+- **Java 21** - Modern Java LTS version with latest features
+- **PostgreSQL** - Robust relational database for data persistence
+- **Hibernate/JPA** - Object-relational mapping for database operations
+- **SpringDoc OpenAPI** - Interactive API documentation with Swagger UI
+- **Spring Cloud Netflix Eureka** - Service discovery and registration
+- **ModelMapper** - Simplified DTO mapping
+- **Lombok** - Reduced boilerplate code
+- **Docker** - Containerized deployment
+
+## API Endpoints Overview
+
+The API is organized into the following main resources:
+
+<AccordionGroup>
+  <Accordion title="Products" icon="couch">
+    `/api/v1/products` - Manage furniture products with full CRUD operations, search by SKU, name, category, and price range filtering
+  </Accordion>
+  <Accordion title="Categories" icon="folder">
+    `/api/v1/categories` - Organize products into hierarchical categories with main and subcategory support
+  </Accordion>
+  <Accordion title="Inventory" icon="boxes-stacked">
+    `/api/v1/inventory` - Track stock levels, manage inventory, check low stock items and out-of-stock products
+  </Accordion>
+  <Accordion title="Suppliers" icon="truck">
+    `/api/v1/suppliers` - Manage supplier information and product sourcing
+  </Accordion>
+  <Accordion title="Product Reviews" icon="star">
+    `/api/v1/product-reviews` - Customer review and rating system
+  </Accordion>
+  <Accordion title="Product Images" icon="image">
+    `/api/v1/product-images` - Manage multiple images per product
+  </Accordion>
+  <Accordion title="Product Dimensions" icon="ruler">
+    `/api/v1/product-dimensions` - Track product measurements and physical specifications
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+  All endpoints support pagination and return data in JSON format with snake_case property naming.
+</Note>
+
+## Service Discovery
+
+The Furniture API is configured as a microservice with Netflix Eureka service discovery, allowing it to:
+
+- Register automatically with the Eureka server
+- Enable load balancing and fault tolerance
+- Support distributed system architectures
+- Facilitate service-to-service communication
+
+## Ready to Get Started?
+
+Jump into the [Quick Start guide](/quickstart) to set up the API locally, or explore the [API Reference](/api/overview) to see all available endpoints.

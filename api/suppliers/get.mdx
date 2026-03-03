@@ -1,0 +1,77 @@
+---
+title: Get Supplier
+description: Retrieve a single supplier by its unique identifier
+---
+
+Retrieve detailed information about a specific supplier using its ID.
+
+## Endpoint
+
+```
+GET /api/v1/suppliers/{id}
+```
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the supplier
+</ParamField>
+
+## Response
+
+Returns a supplier object.
+
+<ResponseField name="id" type="integer" required>
+  Unique identifier for the supplier
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  Name of the supplier
+</ResponseField>
+
+<ResponseField name="contactEmail" type="string" required>
+  Contact email address for the supplier
+</ResponseField>
+
+<ResponseField name="contactPhone" type="string" required>
+  Contact phone number for the supplier
+</ResponseField>
+
+<ResponseField name="isActive" type="boolean" required>
+  Indicates whether the supplier is currently active
+</ResponseField>
+
+## Example Request
+
+```bash
+curl https://api.example.com/api/v1/suppliers/1
+```
+
+## Example Response
+
+```json
+{
+  "id": 1,
+  "name": "Premium Furniture Co.",
+  "contactEmail": "sales@premiumfurniture.com",
+  "contactPhone": "+1-555-0100",
+  "isActive": true
+}
+```
+
+## Status Codes
+
+- `200 OK` - Supplier found and returned successfully
+- `404 Not Found` - Supplier with the specified ID does not exist
+
+## Error Response
+
+If the supplier is not found, the API returns a 404 status code:
+
+```json
+{
+  "status": 404,
+  "error": "Not Found",
+  "message": "Supplier not found with id: 1"
+}
+```

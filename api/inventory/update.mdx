@@ -1,0 +1,79 @@
+---
+title: 'Update Inventory Record'
+description: 'Update an existing inventory record'
+---
+
+## PUT /api/v1/inventory/{id}
+
+Update an existing inventory record with new stock information.
+
+### Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the inventory record to update
+</ParamField>
+
+### Request Body
+
+<ParamField body="productId" type="integer" required>
+  ID of the product associated with this inventory record
+</ParamField>
+
+<ParamField body="quantityAvailable" type="integer" required>
+  Updated quantity of the product available in stock
+</ParamField>
+
+<ParamField body="minimumStockLevel" type="integer" required>
+  Updated minimum stock level threshold for low stock alerts
+</ParamField>
+
+### Request
+
+```bash
+curl -X PUT https://api.example.com/api/v1/inventory/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": 101,
+    "quantityAvailable": 75,
+    "minimumStockLevel": 15
+  }'
+```
+
+### Response
+
+<ResponseField name="id" type="integer">
+  Unique identifier for the inventory record
+</ResponseField>
+
+<ResponseField name="productId" type="integer">
+  ID of the associated product
+</ResponseField>
+
+<ResponseField name="quantityAvailable" type="integer">
+  Updated quantity of the product available in stock
+</ResponseField>
+
+<ResponseField name="minimumStockLevel" type="integer">
+  Updated minimum stock level threshold for low stock alerts
+</ResponseField>
+
+<ResponseField name="lastRestockedDate" type="string">
+  Timestamp of when the inventory was last restocked (ISO 8601 format)
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "id": 1,
+  "productId": 101,
+  "quantityAvailable": 75,
+  "minimumStockLevel": 15,
+  "lastRestockedDate": "2026-03-03T10:45:00"
+}
+```
+
+### Status Codes
+
+- `200` - Inventory record updated successfully
+- `404` - Inventory record not found

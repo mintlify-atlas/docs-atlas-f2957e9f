@@ -1,0 +1,224 @@
+---
+title: "Delete Product Image"
+description: "Remove a product image or all images for a product"
+---
+
+## Delete Single Product Image
+
+<RequestExample>
+```bash cURL
+curl -X DELETE "https://api.example.com/api/v1/product-images/1"
+```
+</RequestExample>
+
+Deletes a specific product image by its ID.
+
+### Method and Path
+
+```
+DELETE /api/v1/product-images/{id}
+```
+
+### Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the product image to delete
+</ParamField>
+
+### Response
+
+This endpoint returns no content on successful deletion.
+
+### Response Codes
+
+<ResponseField name="204" type="No Content">
+  Product image successfully deleted
+</ResponseField>
+
+<ResponseField name="404" type="Not Found">
+  Product image with the specified ID was not found
+</ResponseField>
+
+### Error Response Example
+
+```json
+{
+  "status": 404,
+  "error": "Not Found",
+  "message": "Product image not found with id: 999"
+}
+```
+
+### Usage Examples
+
+#### Delete Product Image with cURL
+
+```bash
+curl -X DELETE "https://api.example.com/api/v1/product-images/1" \
+  -H "Content-Type: application/json"
+```
+
+#### Delete Product Image with JavaScript
+
+```javascript
+fetch('https://api.example.com/api/v1/product-images/1', {
+  method: 'DELETE',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+  .then(response => {
+    if (response.status === 204) {
+      console.log('Product image deleted successfully');
+    }
+  })
+  .catch(error => console.error('Error:', error));
+```
+
+#### Delete Product Image with Python
+
+```python
+import requests
+
+response = requests.delete('https://api.example.com/api/v1/product-images/1')
+
+if response.status_code == 204:
+    print('Product image deleted successfully')
+elif response.status_code == 404:
+    print('Product image not found')
+else:
+    print(f'Error: {response.status_code}')
+```
+
+---
+
+## Delete All Product Images
+
+<RequestExample>
+```bash cURL
+curl -X DELETE "https://api.example.com/api/v1/product-images/product/101"
+```
+</RequestExample>
+
+Deletes all images associated with a specific product.
+
+### Method and Path
+
+```
+DELETE /api/v1/product-images/product/{productId}
+```
+
+### Path Parameters
+
+<ParamField path="productId" type="integer" required>
+  The ID of the product whose images should be deleted
+</ParamField>
+
+### Response
+
+This endpoint returns no content on successful deletion.
+
+### Response Codes
+
+<ResponseField name="204" type="No Content">
+  All product images successfully deleted
+</ResponseField>
+
+### Usage Examples
+
+#### Delete All Product Images with cURL
+
+```bash
+curl -X DELETE "https://api.example.com/api/v1/product-images/product/101" \
+  -H "Content-Type: application/json"
+```
+
+#### Delete All Product Images with JavaScript
+
+```javascript
+const productId = 101;
+
+fetch(`https://api.example.com/api/v1/product-images/product/${productId}`, {
+  method: 'DELETE',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+  .then(response => {
+    if (response.status === 204) {
+      console.log('All product images deleted successfully');
+    }
+  })
+  .catch(error => console.error('Error:', error));
+```
+
+#### Delete All Product Images with Python
+
+```python
+import requests
+
+product_id = 101
+response = requests.delete(
+    f'https://api.example.com/api/v1/product-images/product/{product_id}'
+)
+
+if response.status_code == 204:
+    print(f'All images for product {product_id} deleted successfully')
+else:
+    print(f'Error: {response.status_code}')
+```
+
+## Common Use Cases
+
+### Remove a Specific Image
+
+Delete a single image when it's no longer needed or needs to be replaced:
+
+```bash
+curl -X DELETE "https://api.example.com/api/v1/product-images/3"
+```
+
+### Clear All Images Before Re-upload
+
+Delete all images for a product before uploading a new set:
+
+```bash
+# First, delete all existing images
+curl -X DELETE "https://api.example.com/api/v1/product-images/product/101"
+
+# Then, upload new images
+curl -X POST "https://api.example.com/api/v1/product-images" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": 101,
+    "imageUrl": "https://example.com/images/new-sofa-1.jpg",
+    "altText": "New sofa image",
+    "displayOrder": 1
+  }'
+```
+
+### Batch Delete Before Product Removal
+
+Remove all images before deleting a product:
+
+```bash
+# Delete all product images first
+curl -X DELETE "https://api.example.com/api/v1/product-images/product/101"
+
+# Then delete the product
+curl -X DELETE "https://api.example.com/api/v1/products/101"
+```
+
+## Important Notes
+
+<Warning>
+  Deleting a product image is a permanent action and cannot be undone. Make sure you have backups of important images before deletion.
+</Warning>
+
+<Info>
+  When deleting all images for a product, the operation will succeed even if the product has no images. This is not considered an error condition.
+</Info>
+
+<Tip>
+  Before deleting images, consider fetching them first to verify you're deleting the correct ones, especially when using the delete all endpoint.
+</Tip>

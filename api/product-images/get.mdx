@@ -1,0 +1,121 @@
+---
+title: "Get Product Image"
+description: "Retrieve a specific product image by its ID"
+---
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.example.com/api/v1/product-images/1"
+```
+</RequestExample>
+
+Retrieves detailed information about a specific product image.
+
+## Method and Path
+
+```
+GET /api/v1/product-images/{id}
+```
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the product image to retrieve
+</ParamField>
+
+## Response
+
+<ResponseField name="ProductImageResponse" type="object">
+  The product image object
+  
+  <Expandable title="properties">
+    <ResponseField name="id" type="integer">
+      Unique identifier for the product image
+    </ResponseField>
+    
+    <ResponseField name="productId" type="integer">
+      ID of the product this image belongs to
+    </ResponseField>
+    
+    <ResponseField name="imageUrl" type="string">
+      URL of the product image
+    </ResponseField>
+    
+    <ResponseField name="altText" type="string">
+      Alternative text description for accessibility
+    </ResponseField>
+    
+    <ResponseField name="displayOrder" type="integer">
+      Order in which the image should be displayed (lower numbers appear first)
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Response Codes
+
+<ResponseField name="200" type="OK">
+  Product image successfully retrieved
+</ResponseField>
+
+<ResponseField name="404" type="Not Found">
+  Product image with the specified ID was not found
+</ResponseField>
+
+## Response Example
+
+```json
+{
+  "id": 1,
+  "productId": 101,
+  "imageUrl": "https://example.com/images/sofa-front.jpg",
+  "altText": "Modern grey sofa - front view",
+  "displayOrder": 1
+}
+```
+
+## Error Response Example
+
+```json
+{
+  "status": 404,
+  "error": "Not Found",
+  "message": "Product image not found with id: 999"
+}
+```
+
+## Usage Examples
+
+### Get Product Image Details
+
+```bash
+curl -X GET "https://api.example.com/api/v1/product-images/1" \
+  -H "Content-Type: application/json"
+```
+
+### Get Product Image with JavaScript
+
+```javascript
+fetch('https://api.example.com/api/v1/product-images/1', {
+  method: 'GET',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error));
+```
+
+### Get Product Image with Python
+
+```python
+import requests
+
+response = requests.get('https://api.example.com/api/v1/product-images/1')
+if response.status_code == 200:
+    image = response.json()
+    print(f"Image URL: {image['imageUrl']}")
+    print(f"Alt Text: {image['altText']}")
+else:
+    print(f"Error: {response.status_code}")
+```

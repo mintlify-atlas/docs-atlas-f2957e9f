@@ -1,0 +1,319 @@
+---
+title: Search Products
+description: Search and filter products using various criteria
+---
+
+The Products API provides multiple search endpoints to help you find products based on different criteria.
+
+## Search by SKU
+
+```
+GET /api/v1/products/search/sku/{sku}
+```
+
+Retrieves a single product by its Stock Keeping Unit (SKU) identifier.
+
+### Path Parameters
+
+<ParamField path="sku" type="string" required>
+  The SKU identifier of the product to find
+</ParamField>
+
+### Example
+
+```bash
+curl -X GET "https://api.furniture.com/api/v1/products/search/sku/TBL-OAK-001" \
+  -H "Accept: application/json"
+```
+
+### Response Example
+
+```json
+{
+  "id": 1,
+  "name": "Modern Oak Dining Table",
+  "description": "Elegant 6-seater dining table made from solid oak wood",
+  "sku": "TBL-OAK-001",
+  "category_id": 5,
+  "price": 899.99,
+  "cost_price": 450.00,
+  "weight_kg": 45.5,
+  "is_active": true,
+  "created_at": "2024-01-15T10:30:00",
+  "product_dimension_id": 1,
+  "product_inventory_id": 1,
+  "image_ids": [101, 102, 103]
+}
+```
+
+### Response Codes
+
+<ResponseField name="200" type="Success">
+  Product found
+</ResponseField>
+
+<ResponseField name="404" type="Error">
+  Product not found with the specified SKU
+</ResponseField>
+
+---
+
+## Search by Name
+
+```
+GET /api/v1/products/search/name/{name}
+```
+
+Searches for products whose name contains the specified search term (case-insensitive partial match).
+
+### Path Parameters
+
+<ParamField path="name" type="string" required>
+  The search term to match against product names
+</ParamField>
+
+### Example
+
+```bash
+curl -X GET "https://api.furniture.com/api/v1/products/search/name/Oak" \
+  -H "Accept: application/json"
+```
+
+### Response Example
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Modern Oak Dining Table",
+    "description": "Elegant 6-seater dining table made from solid oak wood",
+    "sku": "TBL-OAK-001",
+    "category_id": 5,
+    "price": 899.99,
+    "cost_price": 450.00,
+    "weight_kg": 45.5,
+    "is_active": true,
+    "created_at": "2024-01-15T10:30:00",
+    "product_dimension_id": 1,
+    "product_inventory_id": 1,
+    "image_ids": [101, 102, 103]
+  },
+  {
+    "id": 15,
+    "name": "Rustic Oak Bookshelf",
+    "description": "5-tier bookshelf crafted from reclaimed oak",
+    "sku": "SHF-OAK-015",
+    "category_id": 8,
+    "price": 349.99,
+    "cost_price": 175.00,
+    "weight_kg": 28.0,
+    "is_active": true,
+    "created_at": "2024-01-20T09:15:00",
+    "product_dimension_id": 15,
+    "product_inventory_id": 15,
+    "image_ids": [145, 146]
+  }
+]
+```
+
+### Response Codes
+
+<ResponseField name="200" type="Success">
+  Returns array of matching products (may be empty)
+</ResponseField>
+
+---
+
+## Filter by Category
+
+```
+GET /api/v1/products/category/{categoryId}
+```
+
+Retrieves all products belonging to a specific category.
+
+### Path Parameters
+
+<ParamField path="categoryId" type="integer" required>
+  The ID of the category to filter by
+</ParamField>
+
+### Example
+
+```bash
+curl -X GET "https://api.furniture.com/api/v1/products/category/5" \
+  -H "Accept: application/json"
+```
+
+### Response Example
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Modern Oak Dining Table",
+    "description": "Elegant 6-seater dining table made from solid oak wood",
+    "sku": "TBL-OAK-001",
+    "category_id": 5,
+    "price": 899.99,
+    "cost_price": 450.00,
+    "weight_kg": 45.5,
+    "is_active": true,
+    "created_at": "2024-01-15T10:30:00",
+    "product_dimension_id": 1,
+    "product_inventory_id": 1,
+    "image_ids": [101, 102, 103]
+  },
+  {
+    "id": 7,
+    "name": "Glass Top Dining Table",
+    "description": "Contemporary 4-seater table with tempered glass top",
+    "sku": "TBL-GLS-007",
+    "category_id": 5,
+    "price": 649.99,
+    "cost_price": 325.00,
+    "weight_kg": 35.0,
+    "is_active": true,
+    "created_at": "2024-01-18T11:45:00",
+    "product_dimension_id": 7,
+    "product_inventory_id": 7,
+    "image_ids": [120, 121]
+  }
+]
+```
+
+### Response Codes
+
+<ResponseField name="200" type="Success">
+  Returns array of products in the category (may be empty)
+</ResponseField>
+
+---
+
+## Filter by Price Range
+
+```
+GET /api/v1/products/price-range
+```
+
+Retrieves products within a specified price range.
+
+### Query Parameters
+
+<ParamField query="minPrice" type="number" required>
+  Minimum price (inclusive)
+</ParamField>
+
+<ParamField query="maxPrice" type="number" required>
+  Maximum price (inclusive)
+</ParamField>
+
+### Example
+
+```bash
+curl -X GET "https://api.furniture.com/api/v1/products/price-range?minPrice=500&maxPrice=1000" \
+  -H "Accept: application/json"
+```
+
+### Response Example
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Modern Oak Dining Table",
+    "description": "Elegant 6-seater dining table made from solid oak wood",
+    "sku": "TBL-OAK-001",
+    "category_id": 5,
+    "price": 899.99,
+    "cost_price": 450.00,
+    "weight_kg": 45.5,
+    "is_active": true,
+    "created_at": "2024-01-15T10:30:00",
+    "product_dimension_id": 1,
+    "product_inventory_id": 1,
+    "image_ids": [101, 102, 103]
+  },
+  {
+    "id": 7,
+    "name": "Glass Top Dining Table",
+    "description": "Contemporary 4-seater table with tempered glass top",
+    "sku": "TBL-GLS-007",
+    "category_id": 5,
+    "price": 649.99,
+    "cost_price": 325.00,
+    "weight_kg": 35.0,
+    "is_active": true,
+    "created_at": "2024-01-18T11:45:00",
+    "product_dimension_id": 7,
+    "product_inventory_id": 7,
+    "image_ids": [120, 121]
+  }
+]
+```
+
+### Response Codes
+
+<ResponseField name="200" type="Success">
+  Returns array of products within the price range (may be empty)
+</ResponseField>
+
+---
+
+## Get Active Products
+
+```
+GET /api/v1/products/active
+```
+
+Retrieves all products that are currently active (`is_active = true`).
+
+### Example
+
+```bash
+curl -X GET "https://api.furniture.com/api/v1/products/active" \
+  -H "Accept: application/json"
+```
+
+### Response Example
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Modern Oak Dining Table",
+    "description": "Elegant 6-seater dining table made from solid oak wood",
+    "sku": "TBL-OAK-001",
+    "category_id": 5,
+    "price": 899.99,
+    "cost_price": 450.00,
+    "weight_kg": 45.5,
+    "is_active": true,
+    "created_at": "2024-01-15T10:30:00",
+    "product_dimension_id": 1,
+    "product_inventory_id": 1,
+    "image_ids": [101, 102, 103]
+  },
+  {
+    "id": 2,
+    "name": "Leather Recliner Sofa",
+    "description": "Comfortable 3-seater recliner sofa in genuine leather",
+    "sku": "SFA-LTH-002",
+    "category_id": 3,
+    "price": 1299.99,
+    "cost_price": 650.00,
+    "weight_kg": 85.0,
+    "is_active": true,
+    "created_at": "2024-01-16T14:20:00",
+    "product_dimension_id": 2,
+    "product_inventory_id": 2,
+    "image_ids": [104, 105]
+  }
+]
+```
+
+### Response Codes
+
+<ResponseField name="200" type="Success">
+  Returns array of active products (may be empty)
+</ResponseField>

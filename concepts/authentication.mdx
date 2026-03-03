@@ -1,0 +1,406 @@
+---
+title: Authentication & Security
+description: Security configuration, CORS policies, and authentication guidelines for the Furniture API
+---
+
+## Overview
+
+The Furniture API implements security measures including CORS configuration, SSL requirements for database connections, and service registry authentication through Netflix Eureka. This document covers the current security implementation and best practices.
+
+## CORS Configuration
+
+### Cross-Origin Resource Sharing
+
+The API implements CORS to control which frontend applications can access the API endpoints.
+
+**Configuration**: `CorsConfig.java`
+
+```java
+@Configuration
+public class CorsConfig implements WebMvcConfigurer {
+  @Override
+  public void addCorsMappings(CorsRegistry registry) {
+    registry.addMapping("/api/**")
+        .allowedOrigins("https://tu-frontend.com")
+        .allowedMethods("GET","POST","PUT","DELETE","PATCH","OPTIONS")
+        .allowedHeaders("*");
+  }
+}
+```
+
+### CORS Policy Details
+
+**Allowed Paths**: `/api/**` (all API endpoints)
+
+**Allowed Origins**: `https://tu-frontend.com`
+
+**Allowed Methods**:
+- GET - Read operations
+- POST - Create operations
+- PUT - Full update operations
+- DELETE - Delete operations
+- PATCH - Partial update operations
+- OPTIONS - Preflight requests
+
+**Allowed Headers**: All headers (`*`)
+
+**Credentials**: Not enabled by default
+
+<Warning>
+The wildcard `*` for allowed headers is permissive. In production, consider restricting to specific headers like `Content-Type`, `Authorization`, and `X-Requested-With`.
+</Warning>
+
+### Preflight Requests
+
+Browsers automatically send OPTIONS requests before actual requests when:
+- Using methods other than GET, HEAD, or POST
+- Including custom headers
+- Using Content-Type other than application/x-www-form-urlencoded, multipart/form-data, or text/plain
+
+The CORS configuration handles these preflight requests automatically.
+
+<Expandable title="Example preflight request/response">
+
+**Request**:
+```http
+OPTIONS /api/products HTTP/1.1
+Host: api.furniture.com
+Origin: https://tu-frontend.com
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: Content-Type
+```
+
+**Response**:
+```http
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: https://tu-frontend.com
+Access-Control-Allow-Methods: GET,POST,PUT,DELETE,PATCH,OPTIONS
+Access-Control-Allow-Headers: *
+```
+
+</Expandable>
+
+### Production Considerations
+
+<Note>
+The configuration includes a comment in Spanish: "evitar '*' en producción" (avoid '*' in production), indicating the current setup should be hardened before deployment.
+</Note>
+
+**Recommendations for production**:
+
+1. **Multiple Origins**: Support multiple frontend domains
+```java
+.allowedOrigins(
+    "https://tu-frontend.com",
+    "https://www.tu-frontend.com",
+    "https://admin.tu-frontend.com"
+)
+```
+
+2. **Specific Headers**: Limit allowed headers
+```java
+.allowedHeaders("Content-Type", "Authorization", "X-Request-ID")
+```
+
+3. **Enable Credentials**: If using cookies or authentication
+```java
+.allowCredentials(true)
+```
+
+<Warning>
+When `allowCredentials(true)` is enabled, you cannot use wildcard `*` for origins. You must specify exact domain names.
+</Warning>
+
+## Database Security
+
+### SSL/TLS Encryption
+
+The PostgreSQL database connection requires SSL encryption:
+
+```properties
+spring.datasource.url=jdbc:postgresql://...?sslmode=require&channelBinding=require
+```
+
+**Security Features**:
+- `sslmode=require` - Forces encrypted connections
+- `channelBinding=require` - Prevents man-in-the-middle attacks
+- Connection pooling through Neon pooler
+
+<Info>
+All data in transit between the application and database is encrypted using TLS. Neon uses certificate-based authentication for added security.
+</Info>
+
+### Database Credentials
+
+<Warning>
+The current `application.properties` file contains hardcoded database credentials. This is a security risk and should be addressed before production deployment.
+</Warning>
+
+**Recommended approach**:
+
+1. **Environment Variables**: Store credentials externally
+```properties
+spring.datasource.url=${DATABASE_URL}
+```
+
+2. **Secret Management**: Use services like:
+   - AWS Secrets Manager
+   - HashiCorp Vault
+   - Kubernetes Secrets
+   - Spring Cloud Config Server
+
+3. **Profile-Specific Configuration**: Separate configs for dev/prod
+```properties
+# application-prod.properties
+spring.datasource.url=${DATABASE_URL}
+```
+
+## Service Discovery Security
+
+### Eureka Client Configuration
+
+The microservice registers with Netflix Eureka for service discovery:
+
+```properties
+eureka.client.service-url.defaultZone=https://furniture-eureka-server.onrender.com/eureka
+eureka.instance.prefer-ip-address=true
+eureka.client.fetch-registry=true
+eureka.client.register-with-eureka=true
+```
+
+**Security considerations**:
+
+- Eureka server uses HTTPS protocol
+- Service registration is automatic on startup
+- IP address is preferred for service-to-service communication
+
+<Info>
+The `@EnableDiscoveryClient` annotation in `FurnitureApplication.java` enables automatic service registration with Eureka, allowing other microservices to discover this API.
+</Info>
+
+## API Security (Not Yet Implemented)
+
+<Warning>
+The current implementation does not include authentication or authorization mechanisms. All endpoints are publicly accessible.
+</Warning>
+
+### Recommended Security Additions
+
+For production deployment, consider implementing:
+
+#### 1. Spring Security
+
+Add Spring Security dependency:
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+```
+
+#### 2. JWT Authentication
+
+Implement token-based authentication:
+
+```java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf().disable()
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/public/**").permitAll()
+                .requestMatchers("/api/**").authenticated()
+            )
+            .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+        return http.build();
+    }
+}
+```
+
+#### 3. OAuth 2.0 / OpenID Connect
+
+Integrate with identity providers:
+- Auth0
+- Okta
+- Keycloak
+- AWS Cognito
+
+#### 4. API Key Authentication
+
+For service-to-service communication:
+
+```java
+@Component
+public class ApiKeyFilter extends OncePerRequestFilter {
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, 
+                                    HttpServletResponse response, 
+                                    FilterChain filterChain) {
+        String apiKey = request.getHeader("X-API-Key");
+        // Validate API key
+    }
+}
+```
+
+## Actuator Security
+
+Spring Boot Actuator endpoints are currently enabled without security:
+
+```properties
+spring-boot-starter-actuator
+```
+
+<Warning>
+Actuator endpoints can expose sensitive information about your application. They should be secured before production deployment.
+</Warning>
+
+**Secure actuator endpoints**:
+
+```properties
+# Expose only health endpoint
+management.endpoints.web.exposure.include=health,info
+management.endpoint.health.show-details=when-authorized
+```
+
+```java
+@Configuration
+public class ActuatorSecurityConfig {
+    @Bean
+    public SecurityFilterChain actuatorSecurity(HttpSecurity http) {
+        http.requestMatcher(EndpointRequest.toAnyEndpoint())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(EndpointRequest.to("health")).permitAll()
+                .anyRequest().hasRole("ADMIN")
+            );
+        return http.build();
+    }
+}
+```
+
+## Input Validation
+
+The application includes Hibernate Validator for bean validation:
+
+```xml
+<dependency>
+    <groupId>org.hibernate.validator</groupId>
+    <artifactId>hibernate-validator</artifactId>
+</dependency>
+```
+
+**Use validation annotations** on DTOs and entities:
+
+```java
+public class ProductRequest {
+    @NotBlank(message = "Product name is required")
+    @Size(min = 3, max = 100)
+    private String name;
+    
+    @NotNull
+    @DecimalMin(value = "0.01")
+    private Double price;
+    
+    @Pattern(regexp = "^[A-Z0-9-]+$")
+    private String sku;
+}
+```
+
+<Info>
+Validation prevents SQL injection and data integrity issues by rejecting invalid input before it reaches the database layer.
+</Info>
+
+## Security Headers
+
+Implement security headers to protect against common web vulnerabilities:
+
+```java
+@Configuration
+public class SecurityHeadersConfig {
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers("/swagger-ui/**");
+    }
+    
+    @Bean
+    public SecurityFilterChain headers(HttpSecurity http) throws Exception {
+        http.headers(headers -> headers
+            .contentSecurityPolicy("default-src 'self'")
+            .xssProtection(xss -> xss.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))
+            .frameOptions(frame -> frame.deny())
+            .httpStrictTransportSecurity(hsts -> hsts
+                .includeSubDomains(true)
+                .maxAgeInSeconds(31536000)
+            )
+        );
+        return http.build();
+    }
+}
+```
+
+## Best Practices
+
+### Development Environment
+
+- Use separate database credentials for development
+- Enable detailed error messages for debugging
+- Use HTTP for local development
+- Keep Swagger UI enabled for API testing
+
+### Production Environment
+
+- Never commit credentials to source control
+- Use environment variables or secret managers
+- Enable HTTPS only (disable HTTP)
+- Implement rate limiting
+- Add request logging and monitoring
+- Disable detailed error messages
+- Restrict CORS to specific domains
+- Secure all actuator endpoints
+- Implement authentication and authorization
+- Use API versioning
+- Add request/response encryption for sensitive data
+
+<Note>
+Consider using Spring Profiles (`@Profile("prod")`) to automatically apply production security configurations when the production profile is active.
+</Note>
+
+## Future Security Enhancements
+
+Recommended roadmap for security improvements:
+
+1. **Phase 1**: Implement JWT authentication
+2. **Phase 2**: Add role-based access control (RBAC)
+3. **Phase 3**: Implement rate limiting and DDoS protection
+4. **Phase 4**: Add API audit logging
+5. **Phase 5**: Implement field-level encryption for sensitive data
+6. **Phase 6**: Add IP whitelisting for admin endpoints
+7. **Phase 7**: Implement API versioning with security policies per version
+
+<Expandable title="Example RBAC implementation">
+
+```java
+@PreAuthorize("hasRole('ADMIN')")
+@DeleteMapping("/api/products/{id}")
+public ResponseEntity<Void> deleteProduct(@PathVariable Integer id) {
+    productService.delete(id);
+    return ResponseEntity.noContent().build();
+}
+
+@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+@GetMapping("/api/products")
+public ResponseEntity<List<Product>> getProducts() {
+    return ResponseEntity.ok(productService.findAll());
+}
+
+@PreAuthorize("hasRole('ADMIN')")
+@PostMapping("/api/products")
+public ResponseEntity<Product> createProduct(@Valid @RequestBody ProductRequest request) {
+    Product product = productService.create(request);
+    return ResponseEntity.status(HttpStatus.CREATED).body(product);
+}
+```
+
+</Expandable>

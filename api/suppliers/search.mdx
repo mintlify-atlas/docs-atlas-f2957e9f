@@ -1,0 +1,248 @@
+---
+title: Search Suppliers
+description: Search and filter suppliers using various criteria
+---
+
+The Suppliers API provides multiple search endpoints to find suppliers by different criteria.
+
+## Search by Name (Exact Match)
+
+Find a supplier by its exact name.
+
+### Endpoint
+
+```
+GET /api/v1/suppliers/search/name/{name}
+```
+
+### Path Parameters
+
+<ParamField path="name" type="string" required>
+  The exact name of the supplier to search for
+</ParamField>
+
+### Response
+
+Returns a single supplier object.
+
+<ResponseField name="id" type="integer" required>
+  Unique identifier for the supplier
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  Name of the supplier
+</ResponseField>
+
+<ResponseField name="contactEmail" type="string" required>
+  Contact email address
+</ResponseField>
+
+<ResponseField name="contactPhone" type="string" required>
+  Contact phone number
+</ResponseField>
+
+<ResponseField name="isActive" type="boolean" required>
+  Whether the supplier is currently active
+</ResponseField>
+
+### Example Request
+
+```bash
+curl https://api.example.com/api/v1/suppliers/search/name/Premium%20Furniture%20Co.
+```
+
+### Example Response
+
+```json
+{
+  "id": 1,
+  "name": "Premium Furniture Co.",
+  "contactEmail": "sales@premiumfurniture.com",
+  "contactPhone": "+1-555-0100",
+  "isActive": true
+}
+```
+
+### Status Codes
+
+- `200 OK` - Supplier found
+- `404 Not Found` - No supplier with the specified name exists
+
+---
+
+## Search by Name (Contains)
+
+Find all suppliers whose name contains a specific substring.
+
+### Endpoint
+
+```
+GET /api/v1/suppliers/search/contains/{name}
+```
+
+### Path Parameters
+
+<ParamField path="name" type="string" required>
+  The substring to search for in supplier names (case-insensitive)
+</ParamField>
+
+### Response
+
+Returns an array of matching supplier objects.
+
+<ResponseField name="suppliers" type="array">
+  Array of suppliers matching the search criteria
+  
+  <ResponseField name="id" type="integer" required>
+    Unique identifier for the supplier
+  </ResponseField>
+  
+  <ResponseField name="name" type="string" required>
+    Name of the supplier
+  </ResponseField>
+  
+  <ResponseField name="contactEmail" type="string" required>
+    Contact email address
+  </ResponseField>
+  
+  <ResponseField name="contactPhone" type="string" required>
+    Contact phone number
+  </ResponseField>
+  
+  <ResponseField name="isActive" type="boolean" required>
+    Whether the supplier is currently active
+  </ResponseField>
+</ResponseField>
+
+### Example Request
+
+```bash
+curl https://api.example.com/api/v1/suppliers/search/contains/Furniture
+```
+
+### Example Response
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Premium Furniture Co.",
+    "contactEmail": "sales@premiumfurniture.com",
+    "contactPhone": "+1-555-0100",
+    "isActive": true
+  },
+  {
+    "id": 4,
+    "name": "Urban Furniture Designs",
+    "contactEmail": "contact@urbanfurniture.com",
+    "contactPhone": "+1-555-0400",
+    "isActive": true
+  }
+]
+```
+
+### Status Codes
+
+- `200 OK` - Search completed (returns empty array if no matches)
+
+---
+
+## Search by Contact Email
+
+Find a supplier by their contact email address.
+
+### Endpoint
+
+```
+GET /api/v1/suppliers/search/email/{email}
+```
+
+### Path Parameters
+
+<ParamField path="email" type="string" required>
+  The contact email address to search for
+</ParamField>
+
+### Response
+
+Returns a single supplier object.
+
+<ResponseField name="id" type="integer" required>
+  Unique identifier for the supplier
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  Name of the supplier
+</ResponseField>
+
+<ResponseField name="contactEmail" type="string" required>
+  Contact email address
+</ResponseField>
+
+<ResponseField name="contactPhone" type="string" required>
+  Contact phone number
+</ResponseField>
+
+<ResponseField name="isActive" type="boolean" required>
+  Whether the supplier is currently active
+</ResponseField>
+
+### Example Request
+
+```bash
+curl https://api.example.com/api/v1/suppliers/search/email/sales@premiumfurniture.com
+```
+
+### Example Response
+
+```json
+{
+  "id": 1,
+  "name": "Premium Furniture Co.",
+  "contactEmail": "sales@premiumfurniture.com",
+  "contactPhone": "+1-555-0100",
+  "isActive": true
+}
+```
+
+### Status Codes
+
+- `200 OK` - Supplier found
+- `404 Not Found` - No supplier with the specified email exists
+
+---
+
+## Search Tips
+
+### URL Encoding
+
+When searching by name or email, ensure special characters are properly URL-encoded:
+
+- Spaces: `%20` or `+`
+- `@` symbol: `%40`
+- Special characters: Use appropriate URL encoding
+
+### Case Sensitivity
+
+- **Exact name search** (`/search/name/{name}`): Case-sensitive
+- **Contains search** (`/search/contains/{name}`): Case-insensitive
+- **Email search** (`/search/email/{email}`): Typically case-insensitive
+
+### Search Strategies
+
+1. **Find a specific supplier**: Use exact name or email search
+2. **Browse similar suppliers**: Use the contains search with a keyword
+3. **List active suppliers**: Use the [active suppliers endpoint](/api/suppliers/list#get-active-suppliers-only)
+4. **Get all suppliers**: Use the [list endpoint](/api/suppliers/list)
+
+### Example: Multi-Step Search
+
+If you're unsure of the exact supplier name:
+
+```bash
+# Step 1: Search for suppliers containing "Furniture"
+curl https://api.example.com/api/v1/suppliers/search/contains/Furniture
+
+# Step 2: Get specific supplier by ID from results
+curl https://api.example.com/api/v1/suppliers/1
+```

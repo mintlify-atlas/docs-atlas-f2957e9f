@@ -1,0 +1,87 @@
+---
+title: 'Get Product Review'
+description: 'Retrieve a specific product review by ID'
+---
+
+## Endpoint
+
+```
+GET /api/v1/product-reviews/{id}
+```
+
+Retrieve detailed information about a specific product review.
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the product review
+</ParamField>
+
+## Response
+
+Returns a product review object.
+
+<ResponseField name="id" type="integer" required>
+  Unique identifier for the review
+</ResponseField>
+
+<ResponseField name="productId" type="integer" required>
+  ID of the product being reviewed
+</ResponseField>
+
+<ResponseField name="userId" type="integer" required>
+  ID of the user who created the review
+</ResponseField>
+
+<ResponseField name="rating" type="integer" required>
+  Rating given to the product (typically 1-5)
+</ResponseField>
+
+<ResponseField name="comment" type="string">
+  Text comment or review description
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  Timestamp when the review was created (ISO 8601 format)
+</ResponseField>
+
+## Status Codes
+
+<ResponseField name="200" type="OK">
+  Successfully retrieved the product review
+</ResponseField>
+
+<ResponseField name="404" type="Not Found">
+  Product review not found
+</ResponseField>
+
+## Example Request
+
+```bash
+curl -X GET "https://api.example.com/api/v1/product-reviews/1"
+```
+
+## Example Response
+
+```json
+{
+  "id": 1,
+  "productId": 101,
+  "userId": 501,
+  "rating": 5,
+  "comment": "Excellent quality sofa! Very comfortable and looks great in my living room.",
+  "createdAt": "2024-01-15T10:30:00"
+}
+```
+
+## Error Response
+
+When a product review is not found:
+
+```json
+{
+  "status": 404,
+  "error": "Not Found",
+  "message": "Product review not found with id: 999"
+}
+```

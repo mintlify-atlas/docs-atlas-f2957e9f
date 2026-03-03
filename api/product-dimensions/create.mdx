@@ -1,0 +1,135 @@
+---
+title: "Create Product Dimensions"
+description: "Create a new product dimensions record"
+---
+
+## Create Product Dimensions
+
+Create a new product dimensions record with length, width, height, and measurement unit information.
+
+### Endpoint
+
+```
+POST /api/v1/product-dimensions
+```
+
+### Request Body
+
+<ParamField body="productId" type="integer" required>
+  ID of the product to associate dimensions with
+</ParamField>
+
+<ParamField body="lengthCm" type="number" required>
+  Length of the product in centimeters
+</ParamField>
+
+<ParamField body="widthCm" type="number" required>
+  Width of the product in centimeters
+</ParamField>
+
+<ParamField body="heightCm" type="number" required>
+  Height of the product in centimeters
+</ParamField>
+
+<ParamField body="dimensionUnit" type="string" required>
+  Unit of measurement for dimensions (e.g., "cm", "inches")
+</ParamField>
+
+### Response
+
+<ResponseField name="id" type="integer">
+  Unique identifier for the newly created product dimensions
+</ResponseField>
+
+<ResponseField name="productId" type="integer">
+  ID of the associated product
+</ResponseField>
+
+<ResponseField name="lengthCm" type="number">
+  Length of the product in centimeters
+</ResponseField>
+
+<ResponseField name="widthCm" type="number">
+  Width of the product in centimeters
+</ResponseField>
+
+<ResponseField name="heightCm" type="number">
+  Height of the product in centimeters
+</ResponseField>
+
+<ResponseField name="dimensionUnit" type="string">
+  Unit of measurement for dimensions
+</ResponseField>
+
+<ResponseField name="createdAt" type="string" format="date-time">
+  Timestamp when the record was created
+</ResponseField>
+
+### Status Codes
+
+<ResponseField name="201" type="Created">
+  Product dimensions successfully created
+</ResponseField>
+
+<ResponseField name="400" type="Bad Request">
+  Invalid request body or validation error
+</ResponseField>
+
+### Example Request
+
+```bash
+curl -X POST https://api.example.com/api/v1/product-dimensions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": 101,
+    "lengthCm": 200.0,
+    "widthCm": 90.0,
+    "heightCm": 85.0,
+    "dimensionUnit": "cm"
+  }'
+```
+
+### Example Response
+
+```json
+{
+  "id": 1,
+  "productId": 101,
+  "lengthCm": 200.0,
+  "widthCm": 90.0,
+  "heightCm": 85.0,
+  "dimensionUnit": "cm",
+  "createdAt": "2024-01-15T10:30:00"
+}
+```
+
+### Response Headers
+
+The response includes a `Location` header with the URI of the created resource:
+
+```
+Location: /api/v1/product-dimensions/1
+```
+
+### Validation Rules
+
+- `productId` must be a valid integer and reference an existing product
+- `lengthCm`, `widthCm`, and `heightCm` must be positive numbers
+- `dimensionUnit` must be a non-empty string
+- All required fields must be provided
+
+### Error Response
+
+```json
+{
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Validation failed",
+  "errors": [
+    {
+      "field": "lengthCm",
+      "message": "must be greater than 0"
+    }
+  ]
+}
+```

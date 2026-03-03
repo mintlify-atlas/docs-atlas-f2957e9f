@@ -1,0 +1,80 @@
+---
+title: Delete Category
+description: Delete a category from the system
+---
+
+# Delete Category
+
+Permanently delete a category from the system. Note that deleting a category with subcategories will also remove all its subcategories due to cascade deletion.
+
+## Endpoint
+
+```
+DELETE /api/v1/categories/{id}
+```
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the category to delete
+</ParamField>
+
+## Response
+
+Returns no content on successful deletion.
+
+## Status Codes
+
+- `204` - Category successfully deleted (no content returned)
+- `404` - Category not found
+
+## Important Notes
+
+<Warning>
+  Deleting a parent category will cascade delete all its subcategories. This operation is irreversible.
+</Warning>
+
+<Info>
+  Consider deactivating a category (using the update endpoint with `isActive: false`) instead of deleting it if you want to preserve historical data.
+</Info>
+
+## Examples
+
+### Delete a Category
+
+```bash
+curl -X DELETE "https://api.example.com/api/v1/categories/10" \
+  -H "Content-Type: application/json"
+```
+
+### Success Response
+
+```
+HTTP/1.1 204 No Content
+```
+
+### Error Response (404)
+
+```json
+{
+  "error": "Category not found",
+  "status": 404
+}
+```
+
+## Alternative: Deactivate Instead of Delete
+
+If you want to hide a category without permanently deleting it, consider using the update endpoint:
+
+```bash
+curl -X PUT "https://api.example.com/api/v1/categories/10" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Sofas",
+    "description": "Comfortable seating furniture",
+    "parentId": 1,
+    "isActive": false
+  }'
+```
+
+This preserves the category data while marking it as inactive.

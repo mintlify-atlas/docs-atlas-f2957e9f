@@ -1,0 +1,270 @@
+---
+title: 'API Overview'
+description: 'Introduction to the Furniture API, including base URL, common patterns, and available resources'
+---
+
+## Introduction
+
+The Furniture API is a RESTful web service that provides comprehensive management of furniture products, categories, inventory, suppliers, and related resources. The API follows REST principles and returns JSON responses with snake_case property naming.
+
+## Base URL
+
+All API endpoints are prefixed with:
+
+```
+/api/v1/
+```
+
+For example, to access products:
+```
+http://localhost:8082/api/v1/products
+```
+
+<Note>
+The API runs on port 8082 by default. Make sure to adjust the hostname and port based on your deployment environment.
+</Note>
+
+## Interactive Documentation
+
+The API provides interactive Swagger UI documentation for exploring and testing endpoints:
+
+```
+http://localhost:8082/doc/swagger-ui.html
+```
+
+Swagger UI allows you to:
+- Browse all available endpoints
+- View request/response schemas
+- Test API calls directly from your browser
+- View detailed parameter information
+
+## Request/Response Format
+
+### Content Type
+
+All requests and responses use JSON format:
+
+```http
+Content-Type: application/json
+```
+
+### Naming Convention
+
+The API uses **snake_case** for JSON property names:
+
+```json
+{
+  "id": 1,
+  "product_name": "Office Chair",
+  "category_id": 5,
+  "is_active": true,
+  "created_at": "2026-03-01T10:30:00"
+}
+```
+
+<Info>
+All timestamp fields are returned in ISO 8601 format (LocalDateTime).
+</Info>
+
+## Common Patterns
+
+### CRUD Operations
+
+Most resources follow standard CRUD patterns:
+
+| Operation | Method | Endpoint | Status Code |
+|-----------|--------|----------|-------------|
+| List all | GET | `/api/v1/{resource}` | 200 |
+| Get by ID | GET | `/api/v1/{resource}/{id}` | 200, 404 |
+| Create | POST | `/api/v1/{resource}` | 201 |
+| Update | PUT | `/api/v1/{resource}/{id}` | 200, 404 |
+| Delete | DELETE | `/api/v1/{resource}/{id}` | 204, 404 |
+
+#### Create Example
+
+```bash
+POST /api/v1/products
+Content-Type: application/json
+
+{
+  "name": "Modern Desk",
+  "description": "Ergonomic standing desk",
+  "sku": "DESK-001",
+  "category_id": 3,
+  "price": 599.99,
+  "cost_price": 350.00,
+  "weight_kg": 25.5,
+  "is_active": true
+}
+```
+
+Response (201 Created):
+```json
+{
+  "id": 42,
+  "name": "Modern Desk",
+  "description": "Ergonomic standing desk",
+  "sku": "DESK-001",
+  "category_id": 3,
+  "price": 599.99,
+  "cost_price": 350.00,
+  "weight_kg": 25.5,
+  "is_active": true,
+  "created_at": "2026-03-03T14:23:15",
+  "product_dimension_id": null,
+  "product_inventory_id": null,
+  "image_ids": []
+}
+```
+
+<Info>
+Create operations return a `Location` header with the URI of the newly created resource.
+</Info>
+
+#### Update Example
+
+```bash
+PUT /api/v1/products/42
+Content-Type: application/json
+
+{
+  "name": "Modern Desk - Updated",
+  "description": "Premium ergonomic standing desk",
+  "sku": "DESK-001",
+  "category_id": 3,
+  "price": 649.99,
+  "cost_price": 350.00,
+  "weight_kg": 25.5,
+  "is_active": true
+}
+```
+
+#### Delete Example
+
+```bash
+DELETE /api/v1/products/42
+```
+
+Response: 204 No Content (empty body)
+
+### Pagination
+
+Many list endpoints support pagination via query parameters:
+
+```bash
+GET /api/v1/products/pagination?page=0&pageSize=10
+```
+
+**Parameters:**
+- `page` - Zero-based page number (default: 0)
+- `pageSize` - Number of items per page (default: 10)
+
+**Example:**
+
+```bash
+# Get first page (items 0-9)
+GET /api/v1/products/pagination?page=0&pageSize=10
+
+# Get second page (items 10-19)
+GET /api/v1/products/pagination?page=1&pageSize=10
+
+# Get 25 items per page
+GET /api/v1/products/pagination?page=0&pageSize=25
+```
+
+<Note>
+Paginated endpoints return an array of items. The total count is not included in the response.
+</Note>
+
+### Search Endpoints
+
+The API provides various search capabilities:
+
+#### By Name (Partial Match)
+
+```bash
+GET /api/v1/products/search/name/desk
+GET /api/v1/categories/search/contains/office
+```
+
+#### By Unique Identifier
+
+```bash
+GET /api/v1/products/search/sku/DESK-001
+GET /api/v1/categories/search/name/Furniture
+```
+
+#### By Related Resource
+
+```bash
+GET /api/v1/products/category/5
+GET /api/v1/inventory/product/42
+GET /api/v1/categories/parent/10
+```
+
+#### By Status/State
+
+```bash
+GET /api/v1/products/active
+GET /api/v1/categories/active
+GET /api/v1/categories/main
+GET /api/v1/inventory/low-stock
+GET /api/v1/inventory/out-of-stock
+```
+
+#### By Range
+
+```bash
+GET /api/v1/products/price-range?minPrice=100.00&maxPrice=500.00
+```
+
+### Filtering
+
+Use query parameters for filtering:
+
+```bash
+# Filter by price range
+GET /api/v1/products/price-range?minPrice=100&maxPrice=1000
+
+# Decrease inventory stock
+PUT /api/v1/inventory/decrease-stock?productId=42&quantity=5
+```
+
+## Available Resources
+
+The API provides the following main resources:
+
+- **Products** - Furniture products with details, pricing, and SKU
+- **Categories** - Hierarchical product categories
+- **Inventory** - Stock management and availability
+- **Suppliers** - Supplier information and management
+- **Product Reviews** - Customer reviews and ratings
+- **Product Images** - Product image references
+- **Product Dimensions** - Physical dimensions of products
+
+<Info>
+Each resource has its own dedicated documentation page with detailed endpoint information.
+</Info>
+
+## CORS Support
+
+All endpoints support Cross-Origin Resource Sharing (CORS) with:
+
+```
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET, POST, PUT, DELETE
+```
+
+<Warning>
+In production environments, it's recommended to restrict CORS to specific origins rather than using the wildcard (*).
+</Warning>
+
+## Validation
+
+All POST and PUT requests validate input data using Jakarta Validation:
+
+- Required fields must be present
+- Data types must match the schema
+- Format constraints are enforced (e.g., email format, min/max values)
+
+See the [Error Handling](/api/errors) page for details on validation error responses.

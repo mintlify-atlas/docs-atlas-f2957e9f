@@ -1,0 +1,89 @@
+---
+title: Get Category
+description: Retrieve a specific category by its ID
+---
+
+# Get Category
+
+Retrieve detailed information about a specific category using its unique identifier.
+
+## Endpoint
+
+```
+GET /api/v1/categories/{id}
+```
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the category to retrieve
+</ParamField>
+
+## Response
+
+Returns a single category object.
+
+<ResponseField name="id" type="integer">
+  Unique identifier for the category
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The category name
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Detailed description of the category
+</ResponseField>
+
+<ResponseField name="parentId" type="integer">
+  ID of the parent category (null for main categories)
+</ResponseField>
+
+<ResponseField name="isActive" type="boolean">
+  Whether the category is currently active
+</ResponseField>
+
+<ResponseField name="product_ids" type="array">
+  List of product IDs associated with this category
+</ResponseField>
+
+<ResponseField name="subcategory_ids" type="array">
+  List of subcategory IDs that belong to this category
+</ResponseField>
+
+## Status Codes
+
+- `200` - Success, returns the category object
+- `404` - Category not found
+
+## Example
+
+### Request
+
+```bash
+curl -X GET "https://api.example.com/api/v1/categories/1" \
+  -H "Content-Type: application/json"
+```
+
+### Response
+
+```json
+{
+  "id": 1,
+  "name": "Living Room",
+  "description": "Furniture for living spaces",
+  "parentId": null,
+  "isActive": true,
+  "product_ids": [101, 102, 103],
+  "subcategory_ids": [10, 11]
+}
+```
+
+### Error Response (404)
+
+```json
+{
+  "error": "Category not found",
+  "status": 404
+}
+```

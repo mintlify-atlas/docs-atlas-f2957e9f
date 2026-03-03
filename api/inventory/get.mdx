@@ -1,0 +1,60 @@
+---
+title: 'Get Inventory Record'
+description: 'Retrieve a single inventory record by ID'
+---
+
+## GET /api/v1/inventory/{id}
+
+Retrieve a specific inventory record by its unique identifier.
+
+### Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the inventory record
+</ParamField>
+
+### Request
+
+```bash
+curl -X GET https://api.example.com/api/v1/inventory/1 \
+  -H "Content-Type: application/json"
+```
+
+### Response
+
+<ResponseField name="id" type="integer">
+  Unique identifier for the inventory record
+</ResponseField>
+
+<ResponseField name="productId" type="integer">
+  ID of the associated product
+</ResponseField>
+
+<ResponseField name="quantityAvailable" type="integer">
+  Current quantity of the product available in stock
+</ResponseField>
+
+<ResponseField name="minimumStockLevel" type="integer">
+  Minimum stock level threshold for low stock alerts
+</ResponseField>
+
+<ResponseField name="lastRestockedDate" type="string">
+  Timestamp of when the inventory was last restocked (ISO 8601 format)
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "id": 1,
+  "productId": 101,
+  "quantityAvailable": 50,
+  "minimumStockLevel": 10,
+  "lastRestockedDate": "2026-03-01T10:30:00"
+}
+```
+
+### Status Codes
+
+- `200` - Success
+- `404` - Inventory record not found

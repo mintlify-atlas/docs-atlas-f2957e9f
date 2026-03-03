@@ -1,0 +1,117 @@
+---
+title: Create Supplier
+description: Add a new supplier to the system
+---
+
+Create a new supplier with contact information and active status.
+
+## Endpoint
+
+```
+POST /api/v1/suppliers
+```
+
+## Request Body
+
+<ParamField body="name" type="string" required>
+  Name of the supplier company or individual
+</ParamField>
+
+<ParamField body="contactEmail" type="string" required>
+  Contact email address for the supplier
+</ParamField>
+
+<ParamField body="contactPhone" type="string" required>
+  Contact phone number for the supplier
+</ParamField>
+
+<ParamField body="isActive" type="boolean" required>
+  Whether the supplier should be marked as active
+</ParamField>
+
+## Response
+
+Returns the created supplier object with its assigned ID.
+
+<ResponseField name="id" type="integer" required>
+  Unique identifier assigned to the new supplier
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  Name of the supplier
+</ResponseField>
+
+<ResponseField name="contactEmail" type="string" required>
+  Contact email address
+</ResponseField>
+
+<ResponseField name="contactPhone" type="string" required>
+  Contact phone number
+</ResponseField>
+
+<ResponseField name="isActive" type="boolean" required>
+  Active status of the supplier
+</ResponseField>
+
+## Example Request
+
+```bash
+curl -X POST https://api.example.com/api/v1/suppliers \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Premium Furniture Co.",
+    "contactEmail": "sales@premiumfurniture.com",
+    "contactPhone": "+1-555-0100",
+    "isActive": true
+  }'
+```
+
+## Example Response
+
+```json
+{
+  "id": 1,
+  "name": "Premium Furniture Co.",
+  "contactEmail": "sales@premiumfurniture.com",
+  "contactPhone": "+1-555-0100",
+  "isActive": true
+}
+```
+
+The response includes a `Location` header pointing to the newly created resource:
+
+```
+Location: /api/v1/suppliers/1
+```
+
+## Status Codes
+
+- `201 Created` - Supplier successfully created
+- `400 Bad Request` - Invalid request body or validation error
+
+## Validation Rules
+
+The following validation rules apply:
+
+- `name` - Must not be empty
+- `contactEmail` - Must be a valid email format
+- `contactPhone` - Must not be empty
+- `isActive` - Must be a boolean value
+
+## Error Response
+
+If validation fails, the API returns a 400 status code:
+
+```json
+{
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Validation failed",
+  "errors": [
+    {
+      "field": "contactEmail",
+      "message": "must be a valid email address"
+    }
+  ]
+}
+```

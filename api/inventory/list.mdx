@@ -1,0 +1,68 @@
+---
+title: 'List Inventory Records'
+description: 'Retrieve a list of all inventory records'
+---
+
+## GET /api/v1/inventory
+
+Retrieve a list of all inventory records in the system.
+
+### Request
+
+No parameters required.
+
+```bash
+curl -X GET https://api.example.com/api/v1/inventory \
+  -H "Content-Type: application/json"
+```
+
+### Response
+
+<ResponseField name="data" type="array">
+  Array of inventory records
+  
+  <ResponseField name="id" type="integer">
+    Unique identifier for the inventory record
+  </ResponseField>
+  
+  <ResponseField name="productId" type="integer">
+    ID of the associated product
+  </ResponseField>
+  
+  <ResponseField name="quantityAvailable" type="integer">
+    Current quantity of the product available in stock
+  </ResponseField>
+  
+  <ResponseField name="minimumStockLevel" type="integer">
+    Minimum stock level threshold for low stock alerts
+  </ResponseField>
+  
+  <ResponseField name="lastRestockedDate" type="string">
+    Timestamp of when the inventory was last restocked (ISO 8601 format)
+  </ResponseField>
+</ResponseField>
+
+### Response Example
+
+```json
+[
+  {
+    "id": 1,
+    "productId": 101,
+    "quantityAvailable": 50,
+    "minimumStockLevel": 10,
+    "lastRestockedDate": "2026-03-01T10:30:00"
+  },
+  {
+    "id": 2,
+    "productId": 102,
+    "quantityAvailable": 5,
+    "minimumStockLevel": 15,
+    "lastRestockedDate": "2026-02-28T14:20:00"
+  }
+]
+```
+
+### Status Codes
+
+- `200` - Success

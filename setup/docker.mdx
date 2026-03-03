@@ -1,0 +1,418 @@
+---
+title: "Docker Setup"
+description: "Deploy the Furniture API using Docker and Docker Compose"
+---
+
+The Furniture API includes Docker configuration for containerized deployment. This guide covers building and running the application with Docker.
+
+## Prerequisites
+
+Ensure you have the following installed:
+
+- Docker Engine 20.10 or higher
+- Docker Compose V2
+- At least 2GB of available RAM
+- At least 1GB of available disk space
+
+## Docker Configuration
+
+### Dockerfile Overview
+
+The application uses a multi-stage Dockerfile optimized for Spring Boot applications:
+
+<Steps>
+  <Step title="Dependencies Stage">
+    Downloads Maven dependencies using the Maven wrapper:
+    
+    ```dockerfile
+    FROM eclipse-temurin:21-jdk-jammy as deps
+    WORKDIR /build
+    COPY --chmod=0755 mvnw mvnw
+    COPY .mvn/ .mvn/
+    RUN --mount=type=bind,source=pom.xml,target=pom.xml \
+        --mount=type=cache,target=/root/.m2 \
+        ./mvnw dependency:go-offline -DskipTests
+    ```
+  </Step>
+  
+  <Step title="Build Stage">
+    Compiles the application and creates the JAR file:
+    
+    ```dockerfile
+    FROM deps as package
+    WORKDIR /build
+    COPY ./src src/
+    RUN --mount=type=bind,source=pom.xml,target=pom.xml \
+        --mount=type=cache,target=/root/.m2 \
+        ./mvnw package -DskipTests && \
+        mv target/*.jar target/app.jar
+    ```
+  </Step>
+  
+  <Step title="Extract Stage">
+    Extracts Spring Boot layers for better caching:
+    
+    ```dockerfile
+    FROM package as extract
+    WORKDIR /build
+    RUN java -Djarmode=layertools -jar target/app.jar extract \
+        --destination target/extracted
+    ```
+  </Step>
+  
+  <Step title="Runtime Stage">
+    Creates minimal runtime image with non-root user:
+    
+    ```dockerfile
+    FROM eclipse-temurin:21-jre-jammy AS final
+    RUN adduser --disabled-password --uid 10001 appuser
+    USER appuser
+    COPY --from=extract build/target/extracted/dependencies/ ./
+    COPY --from=extract build/target/extracted/spring-boot-loader/ ./
+    COPY --from=extract build/target/extracted/snapshot-dependencies/ ./
+    COPY --from=extract build/target/extracted/application/ ./
+    EXPOSE 8082
+    ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
+    ```
+  </Step>
+</Steps>
+
+<Info>
+The multi-stage build reduces final image size and improves build caching. Dependencies are cached separately from application code.
+</Info>
+
+## Building the Docker Image
+
+### Basic Build
+
+Build the Docker image using:
+
+```bash
+docker build -t furniture-api .
+```
+
+### Build with Tag
+
+Build with version tag:
+
+```bash
+docker build -t furniture-api:0.0.1-SNAPSHOT .
+```
+
+<Note>
+The Dockerfile uses BuildKit syntax for improved caching. Ensure BuildKit is enabled:
+```bash
+export DOCKER_BUILDKIT=1
+```
+</Note>
+
+## Running with Docker
+
+### Run Container
+
+Start the container with port mapping:
+
+```bash
+docker run -p 8082:8082 furniture-api
+```
+
+### Run with Environment Variables
+
+Pass environment variables for configuration:
+
+```bash
+docker run -p 8082:8082 \
+  -e DB_HOST=your-db-host \
+  -e DB_PORT=5432 \
+  -e DB_NAME=catalog_and_inventory_db \
+  -e DB_USERNAME=your-username \
+  -e DB_PASSWORD=your-password \
+  furniture-api
+```
+
+### Run in Detached Mode
+
+Run container in background:
+
+```bash
+docker run -d -p 8082:8082 --name furniture-api furniture-api
+```
+
+## Docker Compose Configuration
+
+### Basic Setup
+
+The `compose.yaml` file defines the application service:
+
+```yaml
+services:
+  server:
+    build:
+      context: .
+    ports:
+      - 8082:8082
+```
+
+### With PostgreSQL Database
+
+Extend the configuration to include PostgreSQL:
+
+<CodeGroup>
+
+```yaml Complete Stack
+services:
+  server:
+    build:
+      context: .
+    ports:
+      - 8082:8082
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=catalog_and_inventory_db
+      - DB_USERNAME=postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/catalog_and_inventory_db
+    depends_on:
+      db:
+        condition: service_healthy
+  
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=catalog_and_inventory_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db-data:
+```
+
+```yaml With Secrets
+services:
+  server:
+    build:
+      context: .
+    ports:
+      - 8082:8082
+    secrets:
+      - db-password
+    environment:
+      - DB_PASSWORD_FILE=/run/secrets/db-password
+    depends_on:
+      db:
+        condition: service_healthy
+  
+  db:
+    image: postgres:16-alpine
+    restart: always
+    user: postgres
+    secrets:
+      - db-password
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=catalog_and_inventory_db
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+    expose:
+      - 5432
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db-data:
+
+secrets:
+  db-password:
+    file: db/password.txt
+```
+
+</CodeGroup>
+
+<Warning>
+Create the `db/password.txt` file with your database password before running Docker Compose with secrets.
+</Warning>
+
+## Docker Compose Commands
+
+### Start Services
+
+<Steps>
+  <Step title="Build and start">
+    Build images and start all services:
+    
+    ```bash
+    docker compose up --build
+    ```
+  </Step>
+  
+  <Step title="Run in background">
+    Start services in detached mode:
+    
+    ```bash
+    docker compose up -d
+    ```
+  </Step>
+  
+  <Step title="View logs">
+    Monitor application logs:
+    
+    ```bash
+    # All services
+    docker compose logs -f
+    
+    # Specific service
+    docker compose logs -f server
+    ```
+  </Step>
+</Steps>
+
+### Stop Services
+
+```bash
+# Stop services
+docker compose stop
+
+# Stop and remove containers
+docker compose down
+
+# Stop and remove containers, volumes, and images
+docker compose down -v --rmi all
+```
+
+## Image Optimization
+
+### Layer Caching
+
+The Dockerfile is optimized for layer caching:
+
+1. Dependencies are downloaded in a separate layer
+2. Maven cache is persisted between builds
+3. Spring Boot layers are extracted separately
+4. Only changed layers are rebuilt
+
+<Info>
+This approach significantly speeds up rebuilds when only application code changes, as dependencies don't need to be re-downloaded.
+</Info>
+
+### Image Size
+
+The final image uses JRE instead of JDK:
+
+```dockerfile
+FROM eclipse-temurin:21-jre-jammy AS final
+```
+
+This reduces image size by approximately 200-300 MB compared to using the full JDK.
+
+## Security Best Practices
+
+### Non-Root User
+
+The application runs as a non-privileged user:
+
+```dockerfile
+ARG UID=10001
+RUN adduser \
+    --disabled-password \
+    --gecos "" \
+    --home "/nonexistent" \
+    --shell "/sbin/nologin" \
+    --no-create-home \
+    --uid "${UID}" \
+    appuser
+USER appuser
+```
+
+### Port Configuration
+
+The application exposes port 8082:
+
+```dockerfile
+EXPOSE 8082
+```
+
+Map to a different host port if needed:
+
+```bash
+docker run -p 8080:8082 furniture-api
+```
+
+## Health Checks
+
+Add health check to Docker Compose:
+
+```yaml
+services:
+  server:
+    build:
+      context: .
+    ports:
+      - 8082:8082
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+```
+
+<Note>
+The Furniture API includes Spring Boot Actuator, which provides a `/actuator/health` endpoint for health checks.
+</Note>
+
+## Troubleshooting
+
+### Build Failures
+
+If the build fails:
+
+```bash
+# Clear build cache
+docker builder prune
+
+# Rebuild without cache
+docker build --no-cache -t furniture-api .
+```
+
+### Container Won't Start
+
+Check container logs:
+
+```bash
+docker logs furniture-api
+
+# Or with Docker Compose
+docker compose logs server
+```
+
+### Connection Issues
+
+If the application can't connect to the database:
+
+1. Verify database container is running: `docker compose ps`
+2. Check network connectivity: `docker compose exec server ping db`
+3. Verify environment variables: `docker compose exec server env | grep DB`
+
+### Port Already in Use
+
+If port 8082 is already in use:
+
+```yaml
+services:
+  server:
+    ports:
+      - 8083:8082  # Map to different host port
+```

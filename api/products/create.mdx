@@ -1,0 +1,150 @@
+---
+title: Create Product
+description: Create a new product in the system
+---
+
+## Endpoint
+
+```
+POST /api/v1/products
+```
+
+Creates a new product with the provided information.
+
+## Request Body
+
+<ParamField body="name" type="string" required>
+  The name of the product
+</ParamField>
+
+<ParamField body="description" type="string" required>
+  Detailed description of the product
+</ParamField>
+
+<ParamField body="sku" type="string" required>
+  Stock Keeping Unit - unique identifier for inventory management
+</ParamField>
+
+<ParamField body="category_id" type="integer" required>
+  ID of the category this product belongs to
+</ParamField>
+
+<ParamField body="price" type="number" required>
+  Selling price of the product
+</ParamField>
+
+<ParamField body="cost_price" type="number" required>
+  Cost price of the product (for margin calculation)
+</ParamField>
+
+<ParamField body="weight_kg" type="number" required>
+  Weight of the product in kilograms
+</ParamField>
+
+<ParamField body="is_active" type="boolean" required>
+  Whether the product is currently active and available for sale
+</ParamField>
+
+## Response
+
+Returns the created product object with all fields including the generated ID and timestamp.
+
+<ResponseField name="id" type="integer">
+  Unique identifier for the newly created product
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The name of the product
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Detailed description of the product
+</ResponseField>
+
+<ResponseField name="sku" type="string">
+  Stock Keeping Unit identifier
+</ResponseField>
+
+<ResponseField name="category_id" type="integer">
+  ID of the product's category
+</ResponseField>
+
+<ResponseField name="price" type="number">
+  Selling price of the product
+</ResponseField>
+
+<ResponseField name="cost_price" type="number">
+  Cost price of the product
+</ResponseField>
+
+<ResponseField name="weight_kg" type="number">
+  Weight in kilograms
+</ResponseField>
+
+<ResponseField name="is_active" type="boolean">
+  Whether the product is active
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  Creation timestamp in ISO 8601 format
+</ResponseField>
+
+<ResponseField name="product_dimension_id" type="integer">
+  ID of the associated product dimensions record
+</ResponseField>
+
+<ResponseField name="product_inventory_id" type="integer">
+  ID of the associated inventory record
+</ResponseField>
+
+<ResponseField name="image_ids" type="array">
+  List of image IDs associated with this product
+</ResponseField>
+
+## Example
+
+```bash
+curl -X POST "https://api.furniture.com/api/v1/products" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "name": "Modern Oak Dining Table",
+    "description": "Elegant 6-seater dining table made from solid oak wood",
+    "sku": "TBL-OAK-001",
+    "category_id": 5,
+    "price": 899.99,
+    "cost_price": 450.00,
+    "weight_kg": 45.5,
+    "is_active": true
+  }'
+```
+
+### Response Example
+
+```json
+{
+  "id": 1,
+  "name": "Modern Oak Dining Table",
+  "description": "Elegant 6-seater dining table made from solid oak wood",
+  "sku": "TBL-OAK-001",
+  "category_id": 5,
+  "price": 899.99,
+  "cost_price": 450.00,
+  "weight_kg": 45.5,
+  "is_active": true,
+  "created_at": "2024-01-15T10:30:00",
+  "product_dimension_id": null,
+  "product_inventory_id": null,
+  "image_ids": []
+}
+```
+
+## Response Codes
+
+<ResponseField name="201" type="Success">
+  Product created successfully. The response includes a `Location` header with the URI of the created resource.
+</ResponseField>
+
+<ResponseField name="400" type="Error">
+  Invalid request body or validation errors
+</ResponseField>

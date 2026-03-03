@@ -1,0 +1,147 @@
+---
+title: "Update Product Dimensions"
+description: "Update an existing product dimensions record"
+---
+
+## Update Product Dimensions
+
+Update an existing product dimensions record with new measurements or dimension unit.
+
+### Endpoint
+
+```
+PUT /api/v1/product-dimensions/{id}
+```
+
+### Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the product dimensions record to update
+</ParamField>
+
+### Request Body
+
+<ParamField body="productId" type="integer" required>
+  ID of the product to associate dimensions with
+</ParamField>
+
+<ParamField body="lengthCm" type="number" required>
+  Length of the product in centimeters
+</ParamField>
+
+<ParamField body="widthCm" type="number" required>
+  Width of the product in centimeters
+</ParamField>
+
+<ParamField body="heightCm" type="number" required>
+  Height of the product in centimeters
+</ParamField>
+
+<ParamField body="dimensionUnit" type="string" required>
+  Unit of measurement for dimensions (e.g., "cm", "inches")
+</ParamField>
+
+### Response
+
+<ResponseField name="id" type="integer">
+  Unique identifier for the product dimensions
+</ResponseField>
+
+<ResponseField name="productId" type="integer">
+  ID of the associated product
+</ResponseField>
+
+<ResponseField name="lengthCm" type="number">
+  Length of the product in centimeters
+</ResponseField>
+
+<ResponseField name="widthCm" type="number">
+  Width of the product in centimeters
+</ResponseField>
+
+<ResponseField name="heightCm" type="number">
+  Height of the product in centimeters
+</ResponseField>
+
+<ResponseField name="dimensionUnit" type="string">
+  Unit of measurement for dimensions
+</ResponseField>
+
+<ResponseField name="createdAt" type="string" format="date-time">
+  Timestamp when the record was originally created
+</ResponseField>
+
+### Status Codes
+
+<ResponseField name="200" type="OK">
+  Product dimensions successfully updated
+</ResponseField>
+
+<ResponseField name="400" type="Bad Request">
+  Invalid request body or validation error
+</ResponseField>
+
+<ResponseField name="404" type="Not Found">
+  Product dimensions not found
+</ResponseField>
+
+### Example Request
+
+```bash
+curl -X PUT https://api.example.com/api/v1/product-dimensions/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": 101,
+    "lengthCm": 210.0,
+    "widthCm": 95.0,
+    "heightCm": 90.0,
+    "dimensionUnit": "cm"
+  }'
+```
+
+### Example Response
+
+```json
+{
+  "id": 1,
+  "productId": 101,
+  "lengthCm": 210.0,
+  "widthCm": 95.0,
+  "heightCm": 90.0,
+  "dimensionUnit": "cm",
+  "createdAt": "2024-01-15T10:30:00"
+}
+```
+
+### Validation Rules
+
+- `productId` must be a valid integer and reference an existing product
+- `lengthCm`, `widthCm`, and `heightCm` must be positive numbers
+- `dimensionUnit` must be a non-empty string
+- All required fields must be provided
+
+### Error Responses
+
+**Not Found:**
+```json
+{
+  "status": 404,
+  "error": "Not Found",
+  "message": "Product dimensions not found with id: 1"
+}
+```
+
+**Validation Error:**
+```json
+{
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Validation failed",
+  "errors": [
+    {
+      "field": "widthCm",
+      "message": "must be greater than 0"
+    }
+  ]
+}
+```

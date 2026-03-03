@@ -1,122 +1,146 @@
 {
   "$schema": "https://mintlify.com/docs.json",
+  "name": "Furniture API",
   "theme": "mint",
-  "name": "Mint Starter Kit",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#8B5A3C",
+    "light": "#A67C52",
+    "dark": "#6B4423"
   },
-  "favicon": "/favicon.svg",
+  "navbar": {
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/MarcoAbundio/furniture_api_rest"
+    }
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/MarcoAbundio/furniture_api_rest"
+    }
+  },
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Get Started",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "introduction",
+              "quickstart"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Setup & Configuration",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "setup/database",
+              "setup/docker",
+              "setup/environment"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Core Concepts",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "concepts/architecture",
+              "concepts/data-model",
+              "concepts/authentication"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "API Reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Overview",
             "pages": [
-              "api-reference/introduction"
+              "api/overview",
+              "api/errors"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Products",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api/products/overview",
+              "api/products/list",
+              "api/products/get",
+              "api/products/create",
+              "api/products/update",
+              "api/products/delete",
+              "api/products/search"
+            ]
+          },
+          {
+            "group": "Categories",
+            "pages": [
+              "api/categories/overview",
+              "api/categories/list",
+              "api/categories/get",
+              "api/categories/create",
+              "api/categories/update",
+              "api/categories/delete",
+              "api/categories/search"
+            ]
+          },
+          {
+            "group": "Inventory",
+            "pages": [
+              "api/inventory/overview",
+              "api/inventory/list",
+              "api/inventory/get",
+              "api/inventory/create",
+              "api/inventory/update",
+              "api/inventory/delete"
+            ]
+          },
+          {
+            "group": "Suppliers",
+            "pages": [
+              "api/suppliers/overview",
+              "api/suppliers/list",
+              "api/suppliers/get",
+              "api/suppliers/create",
+              "api/suppliers/update",
+              "api/suppliers/delete",
+              "api/suppliers/search"
+            ]
+          },
+          {
+            "group": "Product Images",
+            "pages": [
+              "api/product-images/overview",
+              "api/product-images/list",
+              "api/product-images/get",
+              "api/product-images/create",
+              "api/product-images/update",
+              "api/product-images/delete"
+            ]
+          },
+          {
+            "group": "Product Dimensions",
+            "pages": [
+              "api/product-dimensions/overview",
+              "api/product-dimensions/list",
+              "api/product-dimensions/get",
+              "api/product-dimensions/create",
+              "api/product-dimensions/update",
+              "api/product-dimensions/delete"
+            ]
+          },
+          {
+            "group": "Product Reviews",
+            "pages": [
+              "api/product-reviews/overview",
+              "api/product-reviews/list",
+              "api/product-reviews/get",
+              "api/product-reviews/create",
+              "api/product-reviews/update",
+              "api/product-reviews/delete",
+              "api/product-reviews/search"
             ]
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
-    }
-  },
-  "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
-  },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
+    ]
   }
 }

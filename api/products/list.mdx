@@ -1,0 +1,149 @@
+---
+title: List Products
+description: Retrieve a list of all products with optional pagination
+---
+
+## Endpoint
+
+```
+GET /api/v1/products
+```
+
+Retrieves all products from the system.
+
+## Pagination Endpoint
+
+```
+GET /api/v1/products/pagination
+```
+
+Retrieves products with pagination support.
+
+### Query Parameters
+
+<ParamField query="page" type="integer" default="0">
+  The page number to retrieve (zero-based index). First page is 0.
+</ParamField>
+
+<ParamField query="pageSize" type="integer" default="10">
+  The number of products to return per page.
+</ParamField>
+
+## Response
+
+<ResponseField name="products" type="array">
+  Array of product objects
+  
+  <Expandable title="Product Object">
+    <ResponseField name="id" type="integer">
+      Unique identifier for the product
+    </ResponseField>
+    
+    <ResponseField name="name" type="string">
+      The name of the product
+    </ResponseField>
+    
+    <ResponseField name="description" type="string">
+      Detailed description of the product
+    </ResponseField>
+    
+    <ResponseField name="sku" type="string">
+      Stock Keeping Unit identifier
+    </ResponseField>
+    
+    <ResponseField name="category_id" type="integer">
+      ID of the product's category
+    </ResponseField>
+    
+    <ResponseField name="price" type="number">
+      Selling price of the product
+    </ResponseField>
+    
+    <ResponseField name="cost_price" type="number">
+      Cost price of the product
+    </ResponseField>
+    
+    <ResponseField name="weight_kg" type="number">
+      Weight in kilograms
+    </ResponseField>
+    
+    <ResponseField name="is_active" type="boolean">
+      Whether the product is active
+    </ResponseField>
+    
+    <ResponseField name="created_at" type="string">
+      Creation timestamp (ISO 8601 format)
+    </ResponseField>
+    
+    <ResponseField name="product_dimension_id" type="integer">
+      Associated dimensions record ID
+    </ResponseField>
+    
+    <ResponseField name="product_inventory_id" type="integer">
+      Associated inventory record ID
+    </ResponseField>
+    
+    <ResponseField name="image_ids" type="array">
+      List of associated image IDs
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Examples
+
+### List All Products
+
+```bash
+curl -X GET "https://api.furniture.com/api/v1/products" \
+  -H "Accept: application/json"
+```
+
+### List Products with Pagination
+
+```bash
+curl -X GET "https://api.furniture.com/api/v1/products/pagination?page=0&pageSize=20" \
+  -H "Accept: application/json"
+```
+
+### Response Example
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Modern Oak Dining Table",
+    "description": "Elegant 6-seater dining table made from solid oak wood",
+    "sku": "TBL-OAK-001",
+    "category_id": 5,
+    "price": 899.99,
+    "cost_price": 450.00,
+    "weight_kg": 45.5,
+    "is_active": true,
+    "created_at": "2024-01-15T10:30:00",
+    "product_dimension_id": 1,
+    "product_inventory_id": 1,
+    "image_ids": [101, 102, 103]
+  },
+  {
+    "id": 2,
+    "name": "Leather Recliner Sofa",
+    "description": "Comfortable 3-seater recliner sofa in genuine leather",
+    "sku": "SFA-LTH-002",
+    "category_id": 3,
+    "price": 1299.99,
+    "cost_price": 650.00,
+    "weight_kg": 85.0,
+    "is_active": true,
+    "created_at": "2024-01-16T14:20:00",
+    "product_dimension_id": 2,
+    "product_inventory_id": 2,
+    "image_ids": [104, 105]
+  }
+]
+```
+
+## Response Codes
+
+<ResponseField name="200" type="Success">
+  Successfully retrieved the list of products
+</ResponseField>

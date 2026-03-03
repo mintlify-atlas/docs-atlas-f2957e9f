@@ -1,0 +1,267 @@
+---
+title: "List Product Dimensions"
+description: "Retrieve a list of all product dimensions or paginated results"
+---
+
+## Get All Product Dimensions
+
+<Note>
+  This endpoint supports both fetching all records and paginated results using different paths.
+</Note>
+
+### Endpoint
+
+```
+GET /api/v1/product-dimensions
+```
+
+Retrieves all product dimensions records in the system.
+
+### Response
+
+<ResponseField name="response" type="array">
+  Array of product dimensions objects
+  
+  <Expandable title="ProductDimensionsResponse">
+    <ResponseField name="id" type="integer">
+      Unique identifier for the product dimensions
+    </ResponseField>
+    
+    <ResponseField name="productId" type="integer">
+      ID of the associated product
+    </ResponseField>
+    
+    <ResponseField name="lengthCm" type="number">
+      Length of the product in centimeters
+    </ResponseField>
+    
+    <ResponseField name="widthCm" type="number">
+      Width of the product in centimeters
+    </ResponseField>
+    
+    <ResponseField name="heightCm" type="number">
+      Height of the product in centimeters
+    </ResponseField>
+    
+    <ResponseField name="dimensionUnit" type="string">
+      Unit of measurement for dimensions
+    </ResponseField>
+    
+    <ResponseField name="createdAt" type="string" format="date-time">
+      Timestamp when the record was created
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Status Codes
+
+<ResponseField name="200" type="OK">
+  Successfully retrieved list of product dimensions
+</ResponseField>
+
+### Example Request
+
+```bash
+curl -X GET https://api.example.com/api/v1/product-dimensions \
+  -H "Content-Type: application/json"
+```
+
+### Example Response
+
+```json
+[
+  {
+    "id": 1,
+    "productId": 101,
+    "lengthCm": 200.0,
+    "widthCm": 90.0,
+    "heightCm": 85.0,
+    "dimensionUnit": "cm",
+    "createdAt": "2024-01-15T10:30:00"
+  },
+  {
+    "id": 2,
+    "productId": 102,
+    "lengthCm": 180.0,
+    "widthCm": 80.0,
+    "heightCm": 75.0,
+    "dimensionUnit": "cm",
+    "createdAt": "2024-01-16T14:20:00"
+  }
+]
+```
+
+---
+
+## Get Paginated Product Dimensions
+
+### Endpoint
+
+```
+GET /api/v1/product-dimensions/pagination
+```
+
+Retrieves product dimensions with pagination support.
+
+### Query Parameters
+
+<ParamField query="page" type="integer" default="0">
+  Page number (zero-based index)
+</ParamField>
+
+<ParamField query="pageSize" type="integer" default="10">
+  Number of records per page
+</ParamField>
+
+### Response
+
+<ResponseField name="response" type="array">
+  Array of product dimensions objects for the requested page
+  
+  <Expandable title="ProductDimensionsResponse">
+    <ResponseField name="id" type="integer">
+      Unique identifier for the product dimensions
+    </ResponseField>
+    
+    <ResponseField name="productId" type="integer">
+      ID of the associated product
+    </ResponseField>
+    
+    <ResponseField name="lengthCm" type="number">
+      Length of the product in centimeters
+    </ResponseField>
+    
+    <ResponseField name="widthCm" type="number">
+      Width of the product in centimeters
+    </ResponseField>
+    
+    <ResponseField name="heightCm" type="number">
+      Height of the product in centimeters
+    </ResponseField>
+    
+    <ResponseField name="dimensionUnit" type="string">
+      Unit of measurement for dimensions
+    </ResponseField>
+    
+    <ResponseField name="createdAt" type="string" format="date-time">
+      Timestamp when the record was created
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Status Codes
+
+<ResponseField name="200" type="OK">
+  Successfully retrieved paginated list of product dimensions
+</ResponseField>
+
+### Example Request
+
+```bash
+curl -X GET "https://api.example.com/api/v1/product-dimensions/pagination?page=0&pageSize=10" \
+  -H "Content-Type: application/json"
+```
+
+### Example Response
+
+```json
+[
+  {
+    "id": 1,
+    "productId": 101,
+    "lengthCm": 200.0,
+    "widthCm": 90.0,
+    "heightCm": 85.0,
+    "dimensionUnit": "cm",
+    "createdAt": "2024-01-15T10:30:00"
+  },
+  {
+    "id": 2,
+    "productId": 102,
+    "lengthCm": 180.0,
+    "widthCm": 80.0,
+    "heightCm": 75.0,
+    "dimensionUnit": "cm",
+    "createdAt": "2024-01-16T14:20:00"
+  }
+]
+```
+
+---
+
+## Get Product Dimensions by Product ID
+
+### Endpoint
+
+```
+GET /api/v1/product-dimensions/product/{productId}
+```
+
+Retrieves product dimensions for a specific product.
+
+### Path Parameters
+
+<ParamField path="productId" type="integer" required>
+  The ID of the product to retrieve dimensions for
+</ParamField>
+
+### Response
+
+<ResponseField name="id" type="integer">
+  Unique identifier for the product dimensions
+</ResponseField>
+
+<ResponseField name="productId" type="integer">
+  ID of the associated product
+</ResponseField>
+
+<ResponseField name="lengthCm" type="number">
+  Length of the product in centimeters
+</ResponseField>
+
+<ResponseField name="widthCm" type="number">
+  Width of the product in centimeters
+</ResponseField>
+
+<ResponseField name="heightCm" type="number">
+  Height of the product in centimeters
+</ResponseField>
+
+<ResponseField name="dimensionUnit" type="string">
+  Unit of measurement for dimensions
+</ResponseField>
+
+<ResponseField name="createdAt" type="string" format="date-time">
+  Timestamp when the record was created
+</ResponseField>
+
+### Status Codes
+
+<ResponseField name="200" type="OK">
+  Successfully retrieved product dimensions
+</ResponseField>
+
+<ResponseField name="404" type="Not Found">
+  Product dimensions not found for the given product
+</ResponseField>
+
+### Example Request
+
+```bash
+curl -X GET https://api.example.com/api/v1/product-dimensions/product/101 \
+  -H "Content-Type: application/json"
+```
+
+### Example Response
+
+```json
+{
+  "id": 1,
+  "productId": 101,
+  "lengthCm": 200.0,
+  "widthCm": 90.0,
+  "heightCm": 85.0,
+  "dimensionUnit": "cm",
+  "createdAt": "2024-01-15T10:30:00"
+}
+```

@@ -1,0 +1,91 @@
+---
+title: "Get Product Dimensions"
+description: "Retrieve product dimensions by ID"
+---
+
+## Get Product Dimensions by ID
+
+Retrieve detailed information about a specific product dimensions record.
+
+### Endpoint
+
+```
+GET /api/v1/product-dimensions/{id}
+```
+
+### Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the product dimensions record
+</ParamField>
+
+### Response
+
+<ResponseField name="id" type="integer">
+  Unique identifier for the product dimensions
+</ResponseField>
+
+<ResponseField name="productId" type="integer">
+  ID of the associated product
+</ResponseField>
+
+<ResponseField name="lengthCm" type="number">
+  Length of the product in centimeters
+</ResponseField>
+
+<ResponseField name="widthCm" type="number">
+  Width of the product in centimeters
+</ResponseField>
+
+<ResponseField name="heightCm" type="number">
+  Height of the product in centimeters
+</ResponseField>
+
+<ResponseField name="dimensionUnit" type="string">
+  Unit of measurement for dimensions (e.g., "cm", "inches")
+</ResponseField>
+
+<ResponseField name="createdAt" type="string" format="date-time">
+  Timestamp when the dimensions record was created
+</ResponseField>
+
+### Status Codes
+
+<ResponseField name="200" type="OK">
+  Successfully retrieved product dimensions
+</ResponseField>
+
+<ResponseField name="404" type="Not Found">
+  Product dimensions not found
+</ResponseField>
+
+### Example Request
+
+```bash
+curl -X GET https://api.example.com/api/v1/product-dimensions/1 \
+  -H "Content-Type: application/json"
+```
+
+### Example Response
+
+```json
+{
+  "id": 1,
+  "productId": 101,
+  "lengthCm": 200.0,
+  "widthCm": 90.0,
+  "heightCm": 85.0,
+  "dimensionUnit": "cm",
+  "createdAt": "2024-01-15T10:30:00"
+}
+```
+
+### Error Response
+
+```json
+{
+  "status": 404,
+  "error": "Not Found",
+  "message": "Product dimensions not found with id: 1"
+}
+```

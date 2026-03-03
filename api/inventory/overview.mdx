@@ -1,0 +1,47 @@
+---
+title: 'Inventory'
+description: 'Manage furniture inventory records including stock levels and tracking'
+---
+
+The Inventory resource allows you to manage furniture inventory records, including tracking stock levels, monitoring low stock items, and updating quantities.
+
+## The Inventory Object
+
+<ResponseField name="id" type="integer">
+  Unique identifier for the inventory record
+</ResponseField>
+
+<ResponseField name="productId" type="integer">
+  ID of the associated product
+</ResponseField>
+
+<ResponseField name="quantityAvailable" type="integer">
+  Current quantity of the product available in stock
+</ResponseField>
+
+<ResponseField name="minimumStockLevel" type="integer">
+  Minimum stock level threshold for low stock alerts
+</ResponseField>
+
+<ResponseField name="lastRestockedDate" type="string">
+  Timestamp of when the inventory was last restocked (ISO 8601 format)
+</ResponseField>
+
+## Available Endpoints
+
+- [List all inventory records](/api/inventory/list) - `GET /api/v1/inventory`
+- [Get inventory record](/api/inventory/get) - `GET /api/v1/inventory/{id}`
+- [Create inventory record](/api/inventory/create) - `POST /api/v1/inventory`
+- [Update inventory record](/api/inventory/update) - `PUT /api/v1/inventory/{id}`
+- [Delete inventory record](/api/inventory/delete) - `DELETE /api/v1/inventory/{id}`
+
+## Common Use Cases
+
+### Stock Monitoring
+Track inventory levels and identify low stock or out-of-stock items using specialized endpoints.
+
+### Inventory Management
+Create and update inventory records to maintain accurate stock levels across your furniture catalog.
+
+### Stock Updates
+Decrease stock quantities when processing orders to maintain real-time inventory accuracy.

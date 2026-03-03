@@ -1,0 +1,114 @@
+---
+title: 'Create Product Review'
+description: 'Create a new product review'
+---
+
+## Endpoint
+
+```
+POST /api/v1/product-reviews
+```
+
+Create a new product review for a furniture product.
+
+## Request Body
+
+<ParamField body="productId" type="integer" required>
+  ID of the product being reviewed
+</ParamField>
+
+<ParamField body="userId" type="integer" required>
+  ID of the user creating the review
+</ParamField>
+
+<ParamField body="rating" type="integer" required>
+  Rating given to the product (typically 1-5)
+</ParamField>
+
+<ParamField body="comment" type="string">
+  Text comment or review description
+</ParamField>
+
+## Response
+
+Returns the created product review object.
+
+<ResponseField name="id" type="integer" required>
+  Unique identifier for the newly created review
+</ResponseField>
+
+<ResponseField name="productId" type="integer" required>
+  ID of the product being reviewed
+</ResponseField>
+
+<ResponseField name="userId" type="integer" required>
+  ID of the user who created the review
+</ResponseField>
+
+<ResponseField name="rating" type="integer" required>
+  Rating given to the product
+</ResponseField>
+
+<ResponseField name="comment" type="string">
+  Text comment or review description
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  Timestamp when the review was created (ISO 8601 format)
+</ResponseField>
+
+## Status Codes
+
+<ResponseField name="201" type="Created">
+  Product review successfully created
+</ResponseField>
+
+<ResponseField name="400" type="Bad Request">
+  Invalid request body or validation error
+</ResponseField>
+
+## Example Request
+
+```bash
+curl -X POST "https://api.example.com/api/v1/product-reviews" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": 101,
+    "userId": 501,
+    "rating": 5,
+    "comment": "Excellent quality sofa! Very comfortable and looks great in my living room."
+  }'
+```
+
+## Example Response
+
+```json
+{
+  "id": 1,
+  "productId": 101,
+  "userId": 501,
+  "rating": 5,
+  "comment": "Excellent quality sofa! Very comfortable and looks great in my living room.",
+  "createdAt": "2024-01-15T10:30:00"
+}
+```
+
+## Response Headers
+
+The response includes a `Location` header with the URI of the created resource:
+
+```
+Location: /api/v1/product-reviews/1
+```
+
+## Validation Rules
+
+- `productId` is required and must be a valid integer
+- `userId` is required and must be a valid integer
+- `rating` is required and must be a valid integer
+- `comment` is optional but should be a string if provided
+
+## Notes
+
+- The `createdAt` timestamp is automatically set by the server
+- The review ID is automatically generated

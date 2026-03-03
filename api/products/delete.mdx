@@ -1,0 +1,53 @@
+---
+title: Delete Product
+description: Delete a product from the system
+---
+
+## Endpoint
+
+```
+DELETE /api/v1/products/{id}
+```
+
+Deletes a product from the system. This operation cannot be undone.
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the product to delete
+</ParamField>
+
+## Response
+
+This endpoint returns no content on successful deletion.
+
+## Example
+
+```bash
+curl -X DELETE "https://api.furniture.com/api/v1/products/1" \
+  -H "Accept: application/json"
+```
+
+### Success Response
+
+No content is returned. Check the HTTP status code to confirm successful deletion.
+
+## Response Codes
+
+<ResponseField name="204" type="Success">
+  Product deleted successfully. No content is returned.
+</ResponseField>
+
+<ResponseField name="404" type="Error">
+  Product not found with the specified ID
+</ResponseField>
+
+## Notes
+
+<Warning>
+  Deleting a product will also remove associated records such as dimensions, inventory, images, and reviews due to cascade deletion rules. This operation cannot be undone.
+</Warning>
+
+<Info>
+  Consider deactivating a product by setting `is_active` to `false` instead of deleting it if you want to preserve historical data.
+</Info>

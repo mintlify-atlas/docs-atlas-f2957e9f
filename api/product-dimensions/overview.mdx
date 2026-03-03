@@ -1,0 +1,68 @@
+---
+title: "Product Dimensions"
+description: "Manage product dimensions including length, width, height, and measurement units for furniture products"
+---
+
+## Overview
+
+The Product Dimensions API allows you to manage dimensional information for furniture products. Each product can have associated dimensions that specify its physical size in centimeters, along with the measurement unit.
+
+## Base URL
+
+```
+/api/v1/product-dimensions
+```
+
+## Resource Structure
+
+The Product Dimensions resource contains the following fields:
+
+<ResponseField name="id" type="integer" required>
+  Unique identifier for the product dimensions record
+</ResponseField>
+
+<ResponseField name="productId" type="integer" required>
+  ID of the associated product
+</ResponseField>
+
+<ResponseField name="lengthCm" type="number" required>
+  Length of the product in centimeters
+</ResponseField>
+
+<ResponseField name="widthCm" type="number" required>
+  Width of the product in centimeters
+</ResponseField>
+
+<ResponseField name="heightCm" type="number" required>
+  Height of the product in centimeters
+</ResponseField>
+
+<ResponseField name="dimensionUnit" type="string" required>
+  Unit of measurement for dimensions (e.g., "cm", "inches")
+</ResponseField>
+
+<ResponseField name="createdAt" type="string" format="date-time">
+  Timestamp when the dimensions record was created
+</ResponseField>
+
+## Available Endpoints
+
+- [List all product dimensions](/api/product-dimensions/list)
+- [Get product dimensions by ID](/api/product-dimensions/get)
+- [Create product dimensions](/api/product-dimensions/create)
+- [Update product dimensions](/api/product-dimensions/update)
+- [Delete product dimensions](/api/product-dimensions/delete)
+
+## Common Use Cases
+
+### Storing Product Measurements
+Create dimension records when adding new furniture products to store their physical measurements.
+
+### Calculating Shipping Requirements
+Retrieve dimensions to calculate shipping costs and requirements based on product size.
+
+### Display Product Information
+Fetch dimension data to display detailed product specifications to customers.
+
+### Updating Specifications
+Update dimension records when product specifications change or corrections are needed.

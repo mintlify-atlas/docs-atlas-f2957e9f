@@ -1,0 +1,124 @@
+---
+title: Create Category
+description: Create a new category in the system
+---
+
+# Create Category
+
+Create a new category. You can create either a main category (by omitting `parentId`) or a subcategory (by providing a `parentId`).
+
+## Endpoint
+
+```
+POST /api/v1/categories
+```
+
+## Request Body
+
+<ParamField body="name" type="string" required>
+  The category name
+</ParamField>
+
+<ParamField body="description" type="string">
+  Detailed description of the category
+</ParamField>
+
+<ParamField body="parentId" type="integer">
+  ID of the parent category. Omit this field or set to null to create a main category
+</ParamField>
+
+<ParamField body="isActive" type="boolean" default="true">
+  Whether the category should be active upon creation
+</ParamField>
+
+## Response
+
+Returns the created category object with a `Location` header pointing to the new resource.
+
+<ResponseField name="id" type="integer">
+  Unique identifier for the newly created category
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The category name
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Detailed description of the category
+</ResponseField>
+
+<ResponseField name="parentId" type="integer">
+  ID of the parent category (null for main categories)
+</ResponseField>
+
+<ResponseField name="isActive" type="boolean">
+  Whether the category is currently active
+</ResponseField>
+
+<ResponseField name="product_ids" type="array">
+  List of product IDs (empty for new categories)
+</ResponseField>
+
+<ResponseField name="subcategory_ids" type="array">
+  List of subcategory IDs (empty for new categories)
+</ResponseField>
+
+## Status Codes
+
+- `201` - Category successfully created
+- `400` - Invalid request body or validation error
+
+## Examples
+
+### Create a Main Category
+
+```bash
+curl -X POST "https://api.example.com/api/v1/categories" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Living Room",
+    "description": "Furniture for living spaces",
+    "isActive": true
+  }'
+```
+
+### Response
+
+```json
+{
+  "id": 1,
+  "name": "Living Room",
+  "description": "Furniture for living spaces",
+  "parentId": null,
+  "isActive": true,
+  "product_ids": [],
+  "subcategory_ids": []
+}
+```
+
+### Create a Subcategory
+
+```bash
+curl -X POST "https://api.example.com/api/v1/categories" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Sofas",
+    "description": "Comfortable seating furniture",
+    "parentId": 1,
+    "isActive": true
+  }'
+```
+
+### Response
+
+```json
+{
+  "id": 10,
+  "name": "Sofas",
+  "description": "Comfortable seating furniture",
+  "parentId": 1,
+  "isActive": true,
+  "product_ids": [],
+  "subcategory_ids": []
+}
+```

@@ -1,0 +1,105 @@
+---
+title: "Product Images"
+description: "Manage product images including URLs, alt text, display order, and primary image designation"
+---
+
+## Overview
+
+The Product Images API allows you to manage images associated with furniture products. Each product can have multiple images with configurable display order and alternative text for accessibility.
+
+## Base URL
+
+All Product Images endpoints are available under:
+
+```
+/api/v1/product-images
+```
+
+## Product Image Object
+
+The product image resource contains the following fields:
+
+<ResponseField name="id" type="integer" required>
+  Unique identifier for the product image
+</ResponseField>
+
+<ResponseField name="productId" type="integer" required>
+  ID of the product this image belongs to
+</ResponseField>
+
+<ResponseField name="imageUrl" type="string" required>
+  URL of the product image
+</ResponseField>
+
+<ResponseField name="altText" type="string">
+  Alternative text description for accessibility
+</ResponseField>
+
+<ResponseField name="displayOrder" type="integer">
+  Order in which the image should be displayed (lower numbers appear first)
+</ResponseField>
+
+## Available Operations
+
+<CardGroup cols={2}>
+  <Card title="List Product Images" icon="list" href="/api/product-images/list">
+    Retrieve all product images or filter by product
+  </Card>
+  
+  <Card title="Get Product Image" icon="image" href="/api/product-images/get">
+    Retrieve a specific product image by ID
+  </Card>
+  
+  <Card title="Create Product Image" icon="plus" href="/api/product-images/create">
+    Add a new image to a product
+  </Card>
+  
+  <Card title="Update Product Image" icon="pen" href="/api/product-images/update">
+    Modify an existing product image
+  </Card>
+  
+  <Card title="Delete Product Image" icon="trash" href="/api/product-images/delete">
+    Remove a product image
+  </Card>
+</CardGroup>
+
+## Common Use Cases
+
+### Get All Images for a Product
+
+Retrieve all images associated with a specific product:
+
+```bash
+curl -X GET "https://api.example.com/api/v1/product-images/product/123"
+```
+
+### Get Ordered Images
+
+Retrieve images sorted by display order:
+
+```bash
+curl -X GET "https://api.example.com/api/v1/product-images/product/123/ordered"
+```
+
+### Get Primary Image
+
+Retrieve the primary image for a product:
+
+```bash
+curl -X GET "https://api.example.com/api/v1/product-images/product/123/primary"
+```
+
+### Delete All Product Images
+
+Remove all images for a specific product:
+
+```bash
+curl -X DELETE "https://api.example.com/api/v1/product-images/product/123"
+```
+
+## Best Practices
+
+- **Display Order**: Use consistent increments (e.g., 1, 2, 3) for display order to make reordering easier
+- **Alt Text**: Always provide descriptive alt text for accessibility compliance
+- **Image URLs**: Ensure URLs are accessible and point to optimized images
+- **Primary Images**: Designate one image as primary for product listings and previews

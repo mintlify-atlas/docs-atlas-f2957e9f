@@ -1,0 +1,264 @@
+---
+title: 'Search & Filter Product Reviews'
+description: 'Search and filter product reviews by various criteria'
+---
+
+## Overview
+
+The Product Reviews API provides several endpoints for searching and filtering reviews based on different criteria.
+
+## By Product ID
+
+### Endpoint
+
+```
+GET /api/v1/product-reviews/product/{productId}
+```
+
+Retrieve all reviews for a specific product.
+
+### Path Parameters
+
+<ParamField path="productId" type="integer" required>
+  The unique identifier of the product
+</ParamField>
+
+### Example Request
+
+```bash
+curl -X GET "https://api.example.com/api/v1/product-reviews/product/101"
+```
+
+### Example Response
+
+```json
+[
+  {
+    "id": 1,
+    "productId": 101,
+    "userId": 501,
+    "rating": 5,
+    "comment": "Excellent quality sofa!",
+    "createdAt": "2024-01-15T10:30:00"
+  },
+  {
+    "id": 3,
+    "productId": 101,
+    "userId": 503,
+    "rating": 5,
+    "comment": "Beautiful design and great value!",
+    "createdAt": "2024-01-17T09:15:00"
+  }
+]
+```
+
+---
+
+## By Product ID (Ordered)
+
+### Endpoint
+
+```
+GET /api/v1/product-reviews/product/{productId}/ordered
+```
+
+Retrieve all reviews for a specific product, ordered by date in descending order (newest first).
+
+### Path Parameters
+
+<ParamField path="productId" type="integer" required>
+  The unique identifier of the product
+</ParamField>
+
+### Example Request
+
+```bash
+curl -X GET "https://api.example.com/api/v1/product-reviews/product/101/ordered"
+```
+
+### Example Response
+
+```json
+[
+  {
+    "id": 3,
+    "productId": 101,
+    "userId": 503,
+    "rating": 5,
+    "comment": "Beautiful design and great value!",
+    "createdAt": "2024-01-17T09:15:00"
+  },
+  {
+    "id": 1,
+    "productId": 101,
+    "userId": 501,
+    "rating": 5,
+    "comment": "Excellent quality sofa!",
+    "createdAt": "2024-01-15T10:30:00"
+  }
+]
+```
+
+---
+
+## Average Rating
+
+### Endpoint
+
+```
+GET /api/v1/product-reviews/product/{productId}/average-rating
+```
+
+Calculate and retrieve the average rating for a specific product.
+
+### Path Parameters
+
+<ParamField path="productId" type="integer" required>
+  The unique identifier of the product
+</ParamField>
+
+### Response
+
+Returns a decimal number representing the average rating.
+
+<ResponseField name="averageRating" type="number">
+  The calculated average rating for the product
+</ResponseField>
+
+### Example Request
+
+```bash
+curl -X GET "https://api.example.com/api/v1/product-reviews/product/101/average-rating"
+```
+
+### Example Response
+
+```json
+4.75
+```
+
+---
+
+## By Minimum Rating
+
+### Endpoint
+
+```
+GET /api/v1/product-reviews/rating/{minRating}
+```
+
+Retrieve all reviews with a rating greater than or equal to the specified minimum rating.
+
+### Path Parameters
+
+<ParamField path="minRating" type="integer" required>
+  The minimum rating threshold (inclusive)
+</ParamField>
+
+### Example Request
+
+Get all reviews with 4 stars or higher:
+
+```bash
+curl -X GET "https://api.example.com/api/v1/product-reviews/rating/4"
+```
+
+### Example Response
+
+```json
+[
+  {
+    "id": 1,
+    "productId": 101,
+    "userId": 501,
+    "rating": 5,
+    "comment": "Excellent quality sofa!",
+    "createdAt": "2024-01-15T10:30:00"
+  },
+  {
+    "id": 2,
+    "productId": 102,
+    "userId": 502,
+    "rating": 4,
+    "comment": "Good dining table.",
+    "createdAt": "2024-01-16T14:20:00"
+  },
+  {
+    "id": 3,
+    "productId": 101,
+    "userId": 503,
+    "rating": 5,
+    "comment": "Beautiful design!",
+    "createdAt": "2024-01-17T09:15:00"
+  }
+]
+```
+
+---
+
+## Pagination
+
+### Endpoint
+
+```
+GET /api/v1/product-reviews/pagination
+```
+
+Retrieve product reviews with pagination support.
+
+### Query Parameters
+
+<ParamField query="page" type="integer" default="0">
+  The page number to retrieve (zero-based)
+</ParamField>
+
+<ParamField query="pageSize" type="integer" default="10">
+  The number of reviews per page
+</ParamField>
+
+### Example Request
+
+Get the second page with 20 reviews per page:
+
+```bash
+curl -X GET "https://api.example.com/api/v1/product-reviews/pagination?page=1&pageSize=20"
+```
+
+### Example Response
+
+```json
+[
+  {
+    "id": 21,
+    "productId": 105,
+    "userId": 520,
+    "rating": 4,
+    "comment": "Great bookshelf!",
+    "createdAt": "2024-02-01T08:45:00"
+  },
+  {
+    "id": 22,
+    "productId": 106,
+    "userId": 521,
+    "rating": 5,
+    "comment": "Love this coffee table.",
+    "createdAt": "2024-02-02T11:30:00"
+  }
+]
+```
+
+### Notes
+
+- Pages are zero-based (first page is `page=0`)
+- Default page size is 10 reviews
+- Returns an array of review objects for the specified page
+
+---
+
+## Status Codes
+
+All search endpoints return:
+
+<ResponseField name="200" type="OK">
+  Successfully retrieved matching product reviews
+</ResponseField>

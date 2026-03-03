@@ -1,0 +1,89 @@
+---
+title: Delete Supplier
+description: Remove a supplier from the system
+---
+
+Permanently delete a supplier by its ID.
+
+## Endpoint
+
+```
+DELETE /api/v1/suppliers/{id}
+```
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the supplier to delete
+</ParamField>
+
+## Response
+
+This endpoint returns no content on success.
+
+## Example Request
+
+```bash
+curl -X DELETE https://api.example.com/api/v1/suppliers/1
+```
+
+## Example Response
+
+No response body is returned. Only the status code indicates success.
+
+## Status Codes
+
+- `204 No Content` - Supplier successfully deleted
+- `404 Not Found` - Supplier with the specified ID does not exist
+
+## Error Response
+
+If the supplier is not found, the API returns a 404 status code:
+
+```json
+{
+  "status": 404,
+  "error": "Not Found",
+  "message": "Supplier not found with id: 1"
+}
+```
+
+## Important Notes
+
+<Warning>
+  This operation is permanent and cannot be undone. Consider using the [update endpoint](/api/suppliers/update) to set `isActive` to `false` instead of deleting the supplier if you need to preserve historical data.
+</Warning>
+
+## Best Practices
+
+### Soft Delete vs Hard Delete
+
+Before permanently deleting a supplier, consider:
+
+1. **Soft delete** - Update the supplier to set `isActive: false`:
+   ```bash
+   curl -X PUT https://api.example.com/api/v1/suppliers/1 \
+     -H "Content-Type: application/json" \
+     -d '{"name": "Old Supplier", "contactEmail": "old@example.com", "contactPhone": "+1-555-0100", "isActive": false}'
+   ```
+
+2. **Hard delete** - Only use when you're certain the supplier record is no longer needed:
+   ```bash
+   curl -X DELETE https://api.example.com/api/v1/suppliers/1
+   ```
+
+### Check Dependencies
+
+Before deleting a supplier, ensure:
+
+- No active products are associated with this supplier
+- All historical records referencing this supplier have been handled
+- You have backed up any necessary data
+
+### Alternative: Get Active Suppliers Only
+
+Instead of deleting suppliers, you can filter them out by using the [active suppliers endpoint](/api/suppliers/list#get-active-suppliers-only):
+
+```bash
+curl https://api.example.com/api/v1/suppliers/active
+```

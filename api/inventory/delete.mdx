@@ -1,0 +1,30 @@
+---
+title: 'Delete Inventory Record'
+description: 'Delete an inventory record by ID'
+---
+
+## DELETE /api/v1/inventory/{id}
+
+Delete a specific inventory record from the system.
+
+### Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the inventory record to delete
+</ParamField>
+
+### Request
+
+```bash
+curl -X DELETE https://api.example.com/api/v1/inventory/1 \
+  -H "Content-Type: application/json"
+```
+
+### Response
+
+No response body is returned for successful deletions.
+
+### Status Codes
+
+- `204` - Inventory record deleted successfully
+- `404` - Inventory record not found

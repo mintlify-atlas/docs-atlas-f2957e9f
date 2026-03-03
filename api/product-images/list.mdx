@@ -1,0 +1,338 @@
+---
+title: "List Product Images"
+description: "Retrieve all product images with optional pagination and filtering"
+---
+
+## Get All Product Images
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.example.com/api/v1/product-images"
+```
+</RequestExample>
+
+Retrieves a list of all product images in the system.
+
+### Method and Path
+
+```
+GET /api/v1/product-images
+```
+
+### Response
+
+<ResponseField name="Array" type="ProductImageResponse[]">
+  Array of product image objects
+  
+  <Expandable title="ProductImageResponse properties">
+    <ResponseField name="id" type="integer">
+      Unique identifier for the product image
+    </ResponseField>
+    
+    <ResponseField name="productId" type="integer">
+      ID of the product this image belongs to
+    </ResponseField>
+    
+    <ResponseField name="imageUrl" type="string">
+      URL of the product image
+    </ResponseField>
+    
+    <ResponseField name="altText" type="string">
+      Alternative text description for accessibility
+    </ResponseField>
+    
+    <ResponseField name="displayOrder" type="integer">
+      Order in which the image should be displayed
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Codes
+
+<ResponseField name="200" type="OK">
+  Successfully retrieved list of product images
+</ResponseField>
+
+### Response Example
+
+```json
+[
+  {
+    "id": 1,
+    "productId": 101,
+    "imageUrl": "https://example.com/images/sofa-front.jpg",
+    "altText": "Modern grey sofa - front view",
+    "displayOrder": 1
+  },
+  {
+    "id": 2,
+    "productId": 101,
+    "imageUrl": "https://example.com/images/sofa-side.jpg",
+    "altText": "Modern grey sofa - side view",
+    "displayOrder": 2
+  },
+  {
+    "id": 3,
+    "productId": 102,
+    "imageUrl": "https://example.com/images/chair-front.jpg",
+    "altText": "Dining chair - front view",
+    "displayOrder": 1
+  }
+]
+```
+
+---
+
+## Get Product Images with Pagination
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.example.com/api/v1/product-images/pagination?page=0&pageSize=20"
+```
+</RequestExample>
+
+Retrieves a paginated list of product images.
+
+### Method and Path
+
+```
+GET /api/v1/product-images/pagination
+```
+
+### Query Parameters
+
+<ParamField query="page" type="integer" default="0">
+  Page number (zero-indexed)
+</ParamField>
+
+<ParamField query="pageSize" type="integer" default="10">
+  Number of items per page
+</ParamField>
+
+### Response
+
+<ResponseField name="Array" type="ProductImageResponse[]">
+  Array of product image objects for the requested page
+</ResponseField>
+
+### Response Codes
+
+<ResponseField name="200" type="OK">
+  Successfully retrieved paginated list of product images
+</ResponseField>
+
+### Response Example
+
+```json
+[
+  {
+    "id": 1,
+    "productId": 101,
+    "imageUrl": "https://example.com/images/sofa-front.jpg",
+    "altText": "Modern grey sofa - front view",
+    "displayOrder": 1
+  },
+  {
+    "id": 2,
+    "productId": 101,
+    "imageUrl": "https://example.com/images/sofa-side.jpg",
+    "altText": "Modern grey sofa - side view",
+    "displayOrder": 2
+  }
+]
+```
+
+---
+
+## Get Images by Product ID
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.example.com/api/v1/product-images/product/101"
+```
+</RequestExample>
+
+Retrieves all images for a specific product.
+
+### Method and Path
+
+```
+GET /api/v1/product-images/product/{productId}
+```
+
+### Path Parameters
+
+<ParamField path="productId" type="integer" required>
+  ID of the product to retrieve images for
+</ParamField>
+
+### Response
+
+<ResponseField name="Array" type="ProductImageResponse[]">
+  Array of product image objects for the specified product
+</ResponseField>
+
+### Response Codes
+
+<ResponseField name="200" type="OK">
+  Successfully retrieved product images
+</ResponseField>
+
+### Response Example
+
+```json
+[
+  {
+    "id": 1,
+    "productId": 101,
+    "imageUrl": "https://example.com/images/sofa-front.jpg",
+    "altText": "Modern grey sofa - front view",
+    "displayOrder": 1
+  },
+  {
+    "id": 2,
+    "productId": 101,
+    "imageUrl": "https://example.com/images/sofa-side.jpg",
+    "altText": "Modern grey sofa - side view",
+    "displayOrder": 2
+  }
+]
+```
+
+---
+
+## Get Ordered Images by Product ID
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.example.com/api/v1/product-images/product/101/ordered"
+```
+</RequestExample>
+
+Retrieves all images for a specific product, sorted by display order.
+
+### Method and Path
+
+```
+GET /api/v1/product-images/product/{productId}/ordered
+```
+
+### Path Parameters
+
+<ParamField path="productId" type="integer" required>
+  ID of the product to retrieve images for
+</ParamField>
+
+### Response
+
+<ResponseField name="Array" type="ProductImageResponse[]">
+  Array of product image objects sorted by display order (ascending)
+</ResponseField>
+
+### Response Codes
+
+<ResponseField name="200" type="OK">
+  Successfully retrieved ordered product images
+</ResponseField>
+
+### Response Example
+
+```json
+[
+  {
+    "id": 1,
+    "productId": 101,
+    "imageUrl": "https://example.com/images/sofa-front.jpg",
+    "altText": "Modern grey sofa - front view",
+    "displayOrder": 1
+  },
+  {
+    "id": 2,
+    "productId": 101,
+    "imageUrl": "https://example.com/images/sofa-side.jpg",
+    "altText": "Modern grey sofa - side view",
+    "displayOrder": 2
+  },
+  {
+    "id": 3,
+    "productId": 101,
+    "imageUrl": "https://example.com/images/sofa-back.jpg",
+    "altText": "Modern grey sofa - back view",
+    "displayOrder": 3
+  }
+]
+```
+
+---
+
+## Get Primary Image by Product ID
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.example.com/api/v1/product-images/product/101/primary"
+```
+</RequestExample>
+
+Retrieves the primary image for a specific product.
+
+### Method and Path
+
+```
+GET /api/v1/product-images/product/{productId}/primary
+```
+
+### Path Parameters
+
+<ParamField path="productId" type="integer" required>
+  ID of the product to retrieve the primary image for
+</ParamField>
+
+### Response
+
+<ResponseField name="ProductImageResponse" type="object">
+  The primary product image object
+  
+  <Expandable title="properties">
+    <ResponseField name="id" type="integer">
+      Unique identifier for the product image
+    </ResponseField>
+    
+    <ResponseField name="productId" type="integer">
+      ID of the product this image belongs to
+    </ResponseField>
+    
+    <ResponseField name="imageUrl" type="string">
+      URL of the product image
+    </ResponseField>
+    
+    <ResponseField name="altText" type="string">
+      Alternative text description for accessibility
+    </ResponseField>
+    
+    <ResponseField name="displayOrder" type="integer">
+      Order in which the image should be displayed
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response Codes
+
+<ResponseField name="200" type="OK">
+  Successfully retrieved primary product image
+</ResponseField>
+
+<ResponseField name="404" type="Not Found">
+  Primary image not found for the specified product
+</ResponseField>
+
+### Response Example
+
+```json
+{
+  "id": 1,
+  "productId": 101,
+  "imageUrl": "https://example.com/images/sofa-front.jpg",
+  "altText": "Modern grey sofa - front view",
+  "displayOrder": 1
+}
+```

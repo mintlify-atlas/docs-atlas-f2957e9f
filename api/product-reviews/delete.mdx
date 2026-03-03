@@ -1,0 +1,60 @@
+---
+title: 'Delete Product Review'
+description: 'Delete a product review'
+---
+
+## Endpoint
+
+```
+DELETE /api/v1/product-reviews/{id}
+```
+
+Delete a product review from the system.
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the product review to delete
+</ParamField>
+
+## Response
+
+This endpoint returns no content on successful deletion.
+
+## Status Codes
+
+<ResponseField name="204" type="No Content">
+  Product review successfully deleted
+</ResponseField>
+
+<ResponseField name="404" type="Not Found">
+  Product review not found
+</ResponseField>
+
+## Example Request
+
+```bash
+curl -X DELETE "https://api.example.com/api/v1/product-reviews/1"
+```
+
+## Example Response
+
+On success, the response has status code 204 and an empty body.
+
+## Error Response
+
+When a product review is not found:
+
+```json
+{
+  "status": 404,
+  "error": "Not Found",
+  "message": "Product review not found with id: 999"
+}
+```
+
+## Notes
+
+- This operation is permanent and cannot be undone
+- Deleting a review does not affect the associated product or user records
+- No response body is returned on successful deletion

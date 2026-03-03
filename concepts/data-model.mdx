@@ -1,0 +1,388 @@
+---
+title: Data Model
+description: Comprehensive data model documentation for the Furniture API including entity relationships, database schema, and JPA mappings
+---
+
+## Overview
+
+The Furniture API data model is designed to manage a complete furniture catalog with inventory tracking, product organization, and customer reviews. The model uses JPA/Hibernate annotations with bidirectional relationships for efficient data access.
+
+## Entity Relationship Diagram
+
+```
+┌──────────────┐
+│   Category   │
+│              │
+│ - id         │◄────┐
+│ - name       │     │ ManyToOne
+│ - parent_id  │─────┘ (self-referencing)
+└──────┬───────┘
+       │ OneToMany
+       ▼
+┌──────────────┐
+│   Product    │
+│              │
+│ - id         │
+│ - name       │
+│ - sku        │
+│ - price      │
+└──────┬───────┘
+       │
+       ├──────► OneToOne ──────► ProductDimensions
+       │
+       ├──────► OneToOne ──────► Inventory
+       │
+       ├──────► OneToMany ─────► ProductImage
+       │
+       └──────► OneToMany ─────► ProductReview
+
+
+┌──────────────┐
+│   Supplier   │  (independent entity)
+│              │
+│ - id         │
+│ - name       │
+└──────────────┘
+```
+
+## Core Entities
+
+### Product
+
+The central entity representing furniture items in the catalog.
+
+**Table**: `products`
+
+**Fields**:
+- `id` (Integer) - Primary key, auto-generated
+- `name` (String) - Product name
+- `description` (String) - Product description
+- `sku` (String) - Stock Keeping Unit identifier
+- `category_id` (Integer) - Foreign key to Category
+- `price` (Double) - Selling price
+- `cost_price` (Double) - Cost/wholesale price
+- `weight_kg` (Double) - Product weight in kilograms
+- `is_active` (Boolean) - Active status flag
+- `created_at` (LocalDateTime) - Creation timestamp
+
+**Relationships**:
+
+```java
+// Many products belong to one category
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "category_id")
+private Category category;
+
+// One product has one dimension record
+@OneToOne(mappedBy = "product", fetch = FetchType.LAZY, 
+          cascade = CascadeType.ALL, orphanRemoval = true)
+private ProductDimensions dimensions;
+
+// One product has one inventory record
+@OneToOne(mappedBy = "product", fetch = FetchType.LAZY,
+          cascade = CascadeType.ALL, orphanRemoval = true)
+private Inventory inventory;
+
+// One product has many images
+@OneToMany(mappedBy = "product", fetch = FetchType.LAZY,
+           cascade = CascadeType.ALL, orphanRemoval = true)
+private List<ProductImage> images;
+
+// One product has many reviews
+@OneToMany(mappedBy = "product", fetch = FetchType.LAZY,
+           cascade = CascadeType.ALL, orphanRemoval = true)
+private List<ProductReview> reviews;
+```
+
+<Info>
+All child entities use `CascadeType.ALL` and `orphanRemoval = true`, meaning when a product is deleted, all its dimensions, inventory, images, and reviews are automatically deleted.
+</Info>
+
+### Category
+
+Hierarchical category structure supporting parent-child relationships.
+
+**Table**: `categories`
+
+**Fields**:
+- `id` (Integer) - Primary key, auto-generated
+- `name` (String) - Category name
+- `description` (String) - Category description
+- `parent_id` (Integer) - Foreign key to parent category (self-referencing)
+- `is_active` (Boolean) - Active status flag
+
+**Relationships**:
+
+```java
+// Self-referencing: Many categories belong to one parent
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "parent_id")
+private Category parent;
+
+// One category has many products
+@OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+private List<Product> products;
+
+// One category has many subcategories
+@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY,
+           cascade = CascadeType.ALL, orphanRemoval = true)
+private List<Category> subcategories;
+```
+
+<Expandable title="Category hierarchy example">
+
+```
+Living Room (parent_id: null)
+├── Sofas (parent_id: 1)
+├── Coffee Tables (parent_id: 1)
+└── TV Stands (parent_id: 1)
+
+Bedroom (parent_id: null)
+├── Beds (parent_id: 2)
+├── Dressers (parent_id: 2)
+└── Nightstands (parent_id: 2)
+```
+
+</Expandable>
+
+### Inventory
+
+Stock management for products with tracking of available quantities and minimum levels.
+
+**Table**: `inventory`
+
+**Fields**:
+- `id` (Integer) - Primary key, auto-generated
+- `product_id` (Integer) - Foreign key to Product (unique)
+- `quantity_available` (Integer) - Current stock quantity
+- `minimum_stock_level` (Integer) - Reorder threshold
+- `last_restocked_date` (LocalDateTime) - Last restock timestamp
+
+**Relationships**:
+
+```java
+// One-to-one relationship with Product
+@OneToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "product_id")
+private Product product;
+```
+
+<Warning>
+This is a bidirectional OneToOne relationship. The Inventory side owns the foreign key (`product_id`), while Product uses `mappedBy`.
+</Warning>
+
+### ProductDimensions
+
+Physical dimensions for shipping and storage calculations.
+
+**Table**: `product_dimensions`
+
+**Fields**:
+- `id` (Integer) - Primary key, auto-generated
+- `product_id` (Integer) - Foreign key to Product (unique)
+- `length_cm` (Double) - Length in centimeters
+- `width_cm` (Double) - Width in centimeters
+- `height_cm` (Double) - Height in centimeters
+- `dimension_unit` (String) - Unit of measurement
+- `created_at` (LocalDateTime) - Creation timestamp
+
+**Relationships**:
+
+```java
+// One-to-one relationship with Product
+@OneToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "product_id")
+private Product product;
+```
+
+<Note>
+Dimensions are stored separately from the main Product entity to keep the product table normalized and allow optional dimension data.
+</Note>
+
+### ProductImage
+
+Multiple images per product with ordering support.
+
+**Table**: `product_images`
+
+**Fields**:
+- `id` (Integer) - Primary key, auto-generated
+- `product_id` (Integer) - Foreign key to Product
+- `image_url` (String) - URL to the image resource
+- `alt_text` (String) - Alternative text for accessibility
+- `display_order` (Integer) - Sort order for display
+
+**Relationships**:
+
+```java
+// Many images belong to one product
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "product_id")
+private Product product;
+```
+
+<Info>
+Use `display_order` to control which image appears first in product galleries. Lower numbers typically display first.
+</Info>
+
+### ProductReview
+
+Customer reviews and ratings for products.
+
+**Table**: `product_reviews`
+
+**Fields**:
+- `id` (Integer) - Primary key, auto-generated
+- `product_id` (Integer) - Foreign key to Product
+- `user_id` (Integer) - Reference to user (external system)
+- `rating` (Integer) - Numeric rating (e.g., 1-5 stars)
+- `comment` (String) - Review text
+- `created_at` (LocalDateTime) - Review timestamp
+
+**Relationships**:
+
+```java
+// Many reviews belong to one product
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "product_id")
+private Product product;
+```
+
+<Note>
+The `user_id` field is not a foreign key relationship in this service, suggesting user management is handled by a separate microservice.
+</Note>
+
+### Supplier
+
+Supplier contact information (currently independent entity).
+
+**Table**: `suppliers`
+
+**Fields**:
+- `id` (Integer) - Primary key, auto-generated
+- `name` (String) - Supplier name
+- `contact_email` (String) - Email address
+- `contact_phone` (String) - Phone number
+- `is_active` (Boolean) - Active status flag
+
+**Relationships**: None currently defined
+
+<Info>
+The Supplier entity is currently independent. Future versions may link suppliers to products through a join table for many-to-many relationships.
+</Info>
+
+## Fetch Strategies
+
+### Lazy Loading
+
+All relationships use `FetchType.LAZY` to prevent N+1 query problems:
+
+```java
+@ManyToOne(fetch = FetchType.LAZY)
+@OneToOne(fetch = FetchType.LAZY)
+@OneToMany(fetch = FetchType.LAZY)
+```
+
+<Warning>
+With `spring.jpa.open-in-view=false`, you must explicitly fetch related entities within the transaction boundary or use DTO projections to avoid `LazyInitializationException`.
+</Warning>
+
+### Recommended Fetch Patterns
+
+**Fetch product with all details**:
+```java
+SELECT p FROM Product p
+LEFT JOIN FETCH p.category
+LEFT JOIN FETCH p.dimensions
+LEFT JOIN FETCH p.inventory
+WHERE p.id = :id
+```
+
+**Fetch product with images**:
+```java
+SELECT p FROM Product p
+LEFT JOIN FETCH p.images
+WHERE p.id = :id
+ORDER BY p.images.displayOrder
+```
+
+## Cascade Operations
+
+### CascadeType.ALL
+
+Child entities (dimensions, inventory, images, reviews) cascade all operations:
+
+- **PERSIST**: Saving a product saves all children
+- **MERGE**: Updating a product updates all children
+- **REMOVE**: Deleting a product deletes all children
+- **REFRESH**: Refreshing a product refreshes all children
+- **DETACH**: Detaching a product detaches all children
+
+### Orphan Removal
+
+```java
+orphanRemoval = true
+```
+
+When a child entity is removed from the parent's collection, it's automatically deleted from the database.
+
+<Expandable title="Orphan removal example">
+
+```java
+// This will delete the image from the database
+product.getImages().remove(imageToDelete);
+productRepository.save(product);
+```
+
+</Expandable>
+
+## Naming Conventions
+
+### Database Naming
+
+- **Tables**: Plural snake_case (e.g., `product_images`, `product_reviews`)
+- **Columns**: Snake_case (e.g., `category_id`, `created_at`)
+- **Physical Strategy**: `PhysicalNamingStrategyStandardImpl` preserves exact column names
+
+### JSON Naming
+
+```java
+@JsonProperty("created_at")
+private LocalDateTime createdAt;
+```
+
+All entities use `@JsonProperty` annotations to ensure snake_case JSON serialization, consistent with the Jackson configuration.
+
+## Lombok Annotations
+
+All entities use Lombok to reduce boilerplate:
+
+```java
+@Data                    // Getters, setters, toString, equals, hashCode
+@NoArgsConstructor       // Default constructor
+@AllArgsConstructor      // Constructor with all fields
+@Builder                 // Builder pattern support
+```
+
+<Note>
+The `@Data` annotation includes `@ToString` which may cause issues with bidirectional relationships. Consider using `@ToString(exclude = "parent")` for circular references.
+</Note>
+
+## Data Integrity
+
+### Constraints
+
+- Primary keys use `GenerationType.IDENTITY` (auto-increment)
+- Foreign key columns use `@JoinColumn` annotations
+- Unique constraints should be added at database level for `product_id` in inventory and dimensions
+
+### Soft Deletes
+
+Entities with `is_active` boolean flags support soft deletion:
+- Product
+- Category  
+- Supplier
+
+<Info>
+Instead of physically deleting records, set `is_active = false` to maintain referential integrity and historical data.
+</Info>

@@ -1,0 +1,94 @@
+---
+title: 'List All Product Reviews'
+description: 'Retrieve a list of all product reviews'
+---
+
+## Endpoint
+
+```
+GET /api/v1/product-reviews
+```
+
+Retrieve a list of all product reviews in the system.
+
+## Response
+
+Returns an array of product review objects.
+
+<ResponseField name="reviews" type="array">
+  Array of product review objects
+  
+  <ResponseField name="id" type="integer" required>
+    Unique identifier for the review
+  </ResponseField>
+  
+  <ResponseField name="productId" type="integer" required>
+    ID of the product being reviewed
+  </ResponseField>
+  
+  <ResponseField name="userId" type="integer" required>
+    ID of the user who created the review
+  </ResponseField>
+  
+  <ResponseField name="rating" type="integer" required>
+    Rating given to the product (typically 1-5)
+  </ResponseField>
+  
+  <ResponseField name="comment" type="string">
+    Text comment or review description
+  </ResponseField>
+  
+  <ResponseField name="createdAt" type="string">
+    Timestamp when the review was created (ISO 8601 format)
+  </ResponseField>
+</ResponseField>
+
+## Status Codes
+
+<ResponseField name="200" type="OK">
+  Successfully retrieved list of product reviews
+</ResponseField>
+
+## Example Request
+
+```bash
+curl -X GET "https://api.example.com/api/v1/product-reviews"
+```
+
+## Example Response
+
+```json
+[
+  {
+    "id": 1,
+    "productId": 101,
+    "userId": 501,
+    "rating": 5,
+    "comment": "Excellent quality sofa! Very comfortable and looks great in my living room.",
+    "createdAt": "2024-01-15T10:30:00"
+  },
+  {
+    "id": 2,
+    "productId": 102,
+    "userId": 502,
+    "rating": 4,
+    "comment": "Good dining table, but assembly was a bit challenging.",
+    "createdAt": "2024-01-16T14:20:00"
+  },
+  {
+    "id": 3,
+    "productId": 101,
+    "userId": 503,
+    "rating": 5,
+    "comment": "Beautiful design and great value for money!",
+    "createdAt": "2024-01-17T09:15:00"
+  }
+]
+```
+
+## Notes
+
+- This endpoint returns all reviews in the system without filtering
+- For paginated results, use the [pagination endpoint](/api/product-reviews/search#pagination)
+- To get reviews for a specific product, use the [product reviews endpoint](/api/product-reviews/search#by-product)
+- Results are not ordered by default; use the ordered endpoint for chronological sorting

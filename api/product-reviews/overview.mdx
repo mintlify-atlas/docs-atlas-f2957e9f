@@ -1,0 +1,103 @@
+---
+title: 'Product Reviews'
+description: 'Manage customer reviews and ratings for furniture products'
+---
+
+## Overview
+
+The Product Reviews API allows you to manage customer reviews and ratings for furniture products. This includes creating, reading, updating, and deleting reviews, as well as searching and filtering reviews by various criteria.
+
+## Base URL
+
+All Product Reviews endpoints are prefixed with:
+
+```
+/api/v1/product-reviews
+```
+
+## Available Endpoints
+
+### Core Operations
+
+- **GET** `/api/v1/product-reviews` - List all product reviews
+- **GET** `/api/v1/product-reviews/{id}` - Get a specific product review by ID
+- **POST** `/api/v1/product-reviews` - Create a new product review
+- **PUT** `/api/v1/product-reviews/{id}` - Update an existing product review
+- **DELETE** `/api/v1/product-reviews/{id}` - Delete a product review
+
+### Search and Filter Operations
+
+- **GET** `/api/v1/product-reviews/product/{productId}` - Get all reviews for a specific product
+- **GET** `/api/v1/product-reviews/product/{productId}/ordered` - Get product reviews ordered by date (newest first)
+- **GET** `/api/v1/product-reviews/product/{productId}/average-rating` - Get average rating for a product
+- **GET** `/api/v1/product-reviews/rating/{minRating}` - Get reviews with rating greater than or equal to specified value
+- **GET** `/api/v1/product-reviews/pagination` - Get all reviews with pagination support
+
+## Product Review Object
+
+A product review object contains the following fields:
+
+<ResponseField name="id" type="integer" required>
+  Unique identifier for the review
+</ResponseField>
+
+<ResponseField name="productId" type="integer" required>
+  ID of the product being reviewed
+</ResponseField>
+
+<ResponseField name="userId" type="integer" required>
+  ID of the user who created the review
+</ResponseField>
+
+<ResponseField name="rating" type="integer" required>
+  Rating given to the product (typically 1-5)
+</ResponseField>
+
+<ResponseField name="comment" type="string">
+  Optional text comment or review description
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  Timestamp when the review was created (ISO 8601 format)
+</ResponseField>
+
+## Common Use Cases
+
+### Display Product Reviews
+
+Retrieve all reviews for a specific product to display on a product detail page:
+
+```bash
+curl -X GET "https://api.example.com/api/v1/product-reviews/product/123"
+```
+
+### Get Average Rating
+
+Calculate the average rating for a product:
+
+```bash
+curl -X GET "https://api.example.com/api/v1/product-reviews/product/123/average-rating"
+```
+
+### Submit a Review
+
+Allow customers to submit reviews:
+
+```bash
+curl -X POST "https://api.example.com/api/v1/product-reviews" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": 123,
+    "userId": 456,
+    "rating": 5,
+    "comment": "Excellent quality and very comfortable!"
+  }'
+```
+
+### Filter by Rating
+
+Get all highly-rated reviews (4 stars and above):
+
+```bash
+curl -X GET "https://api.example.com/api/v1/product-reviews/rating/4"
+```

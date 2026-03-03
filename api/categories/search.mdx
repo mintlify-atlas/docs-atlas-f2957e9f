@@ -1,0 +1,298 @@
+---
+title: Search Categories
+description: Search and filter categories using various criteria
+---
+
+# Search Categories
+
+The Categories API provides several endpoints to search and filter categories based on different criteria.
+
+## Search by Exact Name
+
+Find a category by its exact name.
+
+### Endpoint
+
+```
+GET /api/v1/categories/search/name/{name}
+```
+
+### Path Parameters
+
+<ParamField path="name" type="string" required>
+  The exact name of the category to find
+</ParamField>
+
+### Response
+
+Returns a single category object matching the exact name.
+
+### Status Codes
+
+- `200` - Category found
+- `404` - Category not found
+
+### Example
+
+```bash
+curl -X GET "https://api.example.com/api/v1/categories/search/name/Living%20Room" \
+  -H "Content-Type: application/json"
+```
+
+### Response
+
+```json
+{
+  "id": 1,
+  "name": "Living Room",
+  "description": "Furniture for living spaces",
+  "parentId": null,
+  "isActive": true,
+  "product_ids": [101, 102, 103],
+  "subcategory_ids": [10, 11]
+}
+```
+
+## Search by Name Contains
+
+Find all categories whose name contains a specific string (case-insensitive).
+
+### Endpoint
+
+```
+GET /api/v1/categories/search/contains/{name}
+```
+
+### Path Parameters
+
+<ParamField path="name" type="string" required>
+  The substring to search for in category names
+</ParamField>
+
+### Response
+
+Returns an array of category objects whose names contain the search string.
+
+### Status Codes
+
+- `200` - Returns matching categories (empty array if none found)
+
+### Example
+
+```bash
+curl -X GET "https://api.example.com/api/v1/categories/search/contains/room" \
+  -H "Content-Type: application/json"
+```
+
+### Response
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Living Room",
+    "description": "Furniture for living spaces",
+    "parentId": null,
+    "isActive": true,
+    "product_ids": [101, 102, 103],
+    "subcategory_ids": [10, 11]
+  },
+  {
+    "id": 2,
+    "name": "Bedroom",
+    "description": "Furniture for sleeping spaces",
+    "parentId": null,
+    "isActive": true,
+    "product_ids": [201, 202],
+    "subcategory_ids": [20, 21]
+  }
+]
+```
+
+## Get Active Categories
+
+Retrieve all categories that are currently active.
+
+### Endpoint
+
+```
+GET /api/v1/categories/active
+```
+
+### Response
+
+Returns an array of all active category objects.
+
+### Status Codes
+
+- `200` - Returns active categories
+
+### Example
+
+```bash
+curl -X GET "https://api.example.com/api/v1/categories/active" \
+  -H "Content-Type: application/json"
+```
+
+### Response
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Living Room",
+    "description": "Furniture for living spaces",
+    "parentId": null,
+    "isActive": true,
+    "product_ids": [101, 102, 103],
+    "subcategory_ids": [10, 11]
+  },
+  {
+    "id": 10,
+    "name": "Sofas",
+    "description": "Comfortable seating furniture",
+    "parentId": 1,
+    "isActive": true,
+    "product_ids": [201, 202],
+    "subcategory_ids": []
+  }
+]
+```
+
+## Get Main Categories
+
+Retrieve all main categories (categories without a parent).
+
+### Endpoint
+
+```
+GET /api/v1/categories/main
+```
+
+### Response
+
+Returns an array of all main category objects (where `parentId` is null).
+
+### Status Codes
+
+- `200` - Returns main categories
+
+### Example
+
+```bash
+curl -X GET "https://api.example.com/api/v1/categories/main" \
+  -H "Content-Type: application/json"
+```
+
+### Response
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Living Room",
+    "description": "Furniture for living spaces",
+    "parentId": null,
+    "isActive": true,
+    "product_ids": [101, 102, 103],
+    "subcategory_ids": [10, 11]
+  },
+  {
+    "id": 2,
+    "name": "Bedroom",
+    "description": "Furniture for sleeping spaces",
+    "parentId": null,
+    "isActive": true,
+    "product_ids": [201, 202],
+    "subcategory_ids": [20, 21]
+  }
+]
+```
+
+## Get Subcategories by Parent
+
+Retrieve all subcategories belonging to a specific parent category.
+
+### Endpoint
+
+```
+GET /api/v1/categories/parent/{parentId}
+```
+
+### Path Parameters
+
+<ParamField path="parentId" type="integer" required>
+  The ID of the parent category
+</ParamField>
+
+### Response
+
+Returns an array of category objects that have the specified parent.
+
+### Status Codes
+
+- `200` - Returns subcategories (empty array if none found)
+
+### Example
+
+```bash
+curl -X GET "https://api.example.com/api/v1/categories/parent/1" \
+  -H "Content-Type: application/json"
+```
+
+### Response
+
+```json
+[
+  {
+    "id": 10,
+    "name": "Sofas",
+    "description": "Comfortable seating furniture",
+    "parentId": 1,
+    "isActive": true,
+    "product_ids": [201, 202],
+    "subcategory_ids": []
+  },
+  {
+    "id": 11,
+    "name": "Coffee Tables",
+    "description": "Tables for living room",
+    "parentId": 1,
+    "isActive": true,
+    "product_ids": [301, 302],
+    "subcategory_ids": []
+  }
+]
+```
+
+## Common Response Fields
+
+All search endpoints return category objects with the following structure:
+
+<ResponseField name="id" type="integer">
+  Unique identifier for the category
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The category name
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Detailed description of the category
+</ResponseField>
+
+<ResponseField name="parentId" type="integer">
+  ID of the parent category (null for main categories)
+</ResponseField>
+
+<ResponseField name="isActive" type="boolean">
+  Whether the category is currently active
+</ResponseField>
+
+<ResponseField name="product_ids" type="array">
+  List of product IDs associated with this category
+</ResponseField>
+
+<ResponseField name="subcategory_ids" type="array">
+  List of subcategory IDs that belong to this category
+</ResponseField>

@@ -1,0 +1,86 @@
+---
+title: Products Overview
+description: Overview of the Products API endpoints for managing furniture products in the system
+---
+
+The Products API provides comprehensive endpoints for managing furniture products in your inventory. Products represent individual items available for sale, including their details, pricing, and categorization.
+
+## Resource Structure
+
+A product contains the following information:
+
+<ResponseField name="id" type="integer">
+  Unique identifier for the product
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The name of the product
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Detailed description of the product
+</ResponseField>
+
+<ResponseField name="sku" type="string">
+  Stock Keeping Unit - unique identifier for inventory management
+</ResponseField>
+
+<ResponseField name="category_id" type="integer">
+  ID of the category this product belongs to
+</ResponseField>
+
+<ResponseField name="price" type="number">
+  Selling price of the product
+</ResponseField>
+
+<ResponseField name="cost_price" type="number">
+  Cost price of the product (for margin calculation)
+</ResponseField>
+
+<ResponseField name="weight_kg" type="number">
+  Weight of the product in kilograms
+</ResponseField>
+
+<ResponseField name="is_active" type="boolean">
+  Whether the product is currently active and available for sale
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  Timestamp when the product was created (ISO 8601 format)
+</ResponseField>
+
+<ResponseField name="product_dimension_id" type="integer">
+  ID of the associated product dimensions record
+</ResponseField>
+
+<ResponseField name="product_inventory_id" type="integer">
+  ID of the associated inventory record
+</ResponseField>
+
+<ResponseField name="image_ids" type="array">
+  List of image IDs associated with this product
+</ResponseField>
+
+## Available Endpoints
+
+### CRUD Operations
+- [List Products](/api/products/list) - `GET /api/v1/products`
+- [Get Product](/api/products/get) - `GET /api/v1/products/{id}`
+- [Create Product](/api/products/create) - `POST /api/v1/products`
+- [Update Product](/api/products/update) - `PUT /api/v1/products/{id}`
+- [Delete Product](/api/products/delete) - `DELETE /api/v1/products/{id}`
+
+### Search Operations
+- [Search Products](/api/products/search) - Multiple search endpoints for filtering products
+
+## Pagination
+
+List endpoints support pagination using the following query parameters:
+
+<ParamField query="page" type="integer" default="0">
+  Page number (zero-based)
+</ParamField>
+
+<ParamField query="pageSize" type="integer" default="10">
+  Number of items per page
+</ParamField>

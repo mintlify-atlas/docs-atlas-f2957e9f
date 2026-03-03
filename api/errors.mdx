@@ -1,0 +1,358 @@
+---
+title: 'Error Handling'
+description: 'Understanding error responses, status codes, and error formats in the Furniture API'
+---
+
+## Overview
+
+The Furniture API uses standard HTTP status codes and returns consistent JSON error responses. All errors follow a structured format to help you quickly identify and resolve issues.
+
+## HTTP Status Codes
+
+The API uses the following HTTP status codes:
+
+| Status Code | Description | When It Occurs |
+|-------------|-------------|----------------|
+| 200 OK | Success | GET, PUT requests completed successfully |
+| 201 Created | Resource created | POST requests successfully created a resource |
+| 204 No Content | Success with no body | DELETE requests completed successfully |
+| 400 Bad Request | Invalid request | Validation errors, malformed JSON, illegal arguments |
+| 404 Not Found | Resource not found | Requested resource doesn't exist |
+| 500 Internal Server Error | Server error | Unexpected server-side errors |
+
+## Error Response Format
+
+All error responses are returned as JSON objects containing error details.
+
+### Basic Error Structure
+
+```json
+{
+  "status": 400,
+  "error": "Error message describing what went wrong"
+}
+```
+
+## Error Types
+
+### 404 Not Found
+
+Returned when a requested resource doesn't exist in the database.
+
+**Example Request:**
+```bash
+GET /api/v1/products/9999
+```
+
+**Response (404):**
+```json
+{
+  "status": 404,
+  "error": "Product with ID 9999 not found"
+}
+```
+
+**Common Scenarios:**
+- Getting a product, category, or inventory record by non-existent ID
+- Updating a resource that has been deleted
+- Accessing a related resource that doesn't exist
+
+<Info>
+The error message typically includes the resource type and ID to help with debugging.
+</Info>
+
+### 400 Bad Request - Illegal Argument
+
+Returned when request parameters or data violate business logic rules.
+
+**Example Request:**
+```bash
+PUT /api/v1/inventory/decrease-stock?productId=42&quantity=1000
+```
+
+**Response (400):**
+```json
+{
+  "status": 400,
+  "error": "Insufficient stock available for product ID 42"
+}
+```
+
+**Common Scenarios:**
+- Attempting to decrease inventory below zero
+- Providing invalid price ranges (e.g., minPrice > maxPrice)
+- Violating business rules or constraints
+
+### 400 Bad Request - Validation Error
+
+Returned when request body fails validation constraints (missing required fields, invalid formats, constraint violations).
+
+**Example Request:**
+```bash
+POST /api/v1/products
+Content-Type: application/json
+
+{
+  "name": "",
+  "price": -50.00,
+  "category_id": null
+}
+```
+
+**Response (400):**
+```json
+{
+  "status": 400,
+  "error": "Validation failed",
+  "details": [
+    {
+      "field": "name",
+      "message": "must not be blank"
+    },
+    {
+      "field": "price",
+      "message": "must be greater than or equal to 0"
+    },
+    {
+      "field": "categoryId",
+      "message": "must not be null"
+    }
+  ]
+}
+```
+
+**Common Validation Rules:**
+- Required fields cannot be null or empty
+- Numeric fields must be within acceptable ranges
+- String fields may have length constraints
+- Email fields must match email format
+- Boolean fields must be true/false
+
+<Warning>
+Validation errors include a `details` array listing all validation failures. Fix all issues before retrying.
+</Warning>
+
+### 400 Bad Request - Malformed JSON
+
+Returned when the request body contains invalid JSON or incorrect data types.
+
+**Example Request:**
+```bash
+POST /api/v1/products
+Content-Type: application/json
+
+{
+  "name": "Desk",
+  "price": "not-a-number",
+  "is_active": "yes"
+}
+```
+
+**Response (400):**
+```json
+{
+  "status": 400,
+  "error": "Malformed JSON or incorrect types",
+  "message": "Cannot deserialize value of type 'java.lang.Double' from String \"not-a-number\""
+}
+```
+
+**Common Scenarios:**
+- Invalid JSON syntax (missing quotes, commas, brackets)
+- Type mismatches (string instead of number, string instead of boolean)
+- Incorrect date/time formats
+- Nested JSON structure errors
+
+<Note>
+The `message` field provides detailed information about what couldn't be parsed.
+</Note>
+
+## Error Handling Best Practices
+
+### Check Status Codes
+
+Always check the HTTP status code before processing the response:
+
+```javascript
+fetch('/api/v1/products/42')
+  .then(response => {
+    if (!response.ok) {
+      // Handle error based on status code
+      if (response.status === 404) {
+        console.error('Product not found');
+      } else if (response.status === 400) {
+        console.error('Invalid request');
+      }
+      throw new Error(`HTTP ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    // Process successful response
+    console.log(data);
+  })
+  .catch(error => {
+    console.error('Request failed:', error);
+  });
+```
+
+### Handle Validation Errors
+
+For validation errors, iterate through the `details` array to show field-specific messages:
+
+```javascript
+fetch('/api/v1/products', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(productData)
+})
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 400 && data.details) {
+      // Display validation errors per field
+      data.details.forEach(error => {
+        console.error(`${error.field}: ${error.message}`);
+      });
+    }
+  });
+```
+
+### Validate Before Sending
+
+Validate data on the client side before making API calls:
+
+```javascript
+function validateProduct(product) {
+  const errors = [];
+  
+  if (!product.name || product.name.trim() === '') {
+    errors.push('Product name is required');
+  }
+  
+  if (product.price === null || product.price < 0) {
+    errors.push('Price must be a positive number');
+  }
+  
+  if (!product.category_id) {
+    errors.push('Category is required');
+  }
+  
+  return errors;
+}
+
+const errors = validateProduct(productData);
+if (errors.length > 0) {
+  console.error('Validation failed:', errors);
+  return;
+}
+
+// Proceed with API call
+fetch('/api/v1/products', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(productData)
+});
+```
+
+### Retry Logic for Network Errors
+
+Implement retry logic for transient network failures:
+
+```javascript
+async function fetchWithRetry(url, options, retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const response = await fetch(url, options);
+      if (response.ok) {
+        return await response.json();
+      }
+      // Don't retry client errors (4xx)
+      if (response.status >= 400 && response.status < 500) {
+        throw new Error(`Client error: ${response.status}`);
+      }
+    } catch (error) {
+      if (i === retries - 1) throw error;
+      // Wait before retrying
+      await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+    }
+  }
+}
+```
+
+## Common Error Scenarios
+
+### Creating a Product with Invalid Data
+
+```bash
+POST /api/v1/products
+```
+
+**Missing required fields:**
+```json
+{
+  "status": 400,
+  "error": "Validation failed",
+  "details": [
+    { "field": "name", "message": "must not be null" },
+    { "field": "sku", "message": "must not be null" },
+    { "field": "categoryId", "message": "must not be null" }
+  ]
+}
+```
+
+### Updating a Non-existent Resource
+
+```bash
+PUT /api/v1/categories/9999
+```
+
+```json
+{
+  "status": 404,
+  "error": "Category with ID 9999 not found"
+}
+```
+
+### Malformed JSON Request
+
+```bash
+POST /api/v1/products
+Content-Type: application/json
+
+{ "name": "Desk", invalid json }
+```
+
+```json
+{
+  "status": 400,
+  "error": "Malformed JSON or incorrect types",
+  "message": "Unexpected character ('i' (code 105)): expected a valid value"
+}
+```
+
+### Business Logic Violation
+
+```bash
+PUT /api/v1/inventory/decrease-stock?productId=42&quantity=999999
+```
+
+```json
+{
+  "status": 400,
+  "error": "Cannot decrease stock by 999999. Only 50 units available."
+}
+```
+
+## Debugging Tips
+
+<Info>
+1. **Check the error message**: It usually contains specific details about what went wrong
+2. **Verify your request format**: Ensure JSON is valid and uses snake_case
+3. **Confirm data types**: Match the expected types (numbers, strings, booleans)
+4. **Test with Swagger UI**: Use the interactive documentation at `/doc/swagger-ui.html`
+5. **Check validation constraints**: Review the API documentation for field requirements
+</Info>
+
+<Warning>
+If you consistently receive 500 errors, there may be a server-side issue. Contact the API administrator with the request details.
+</Warning>

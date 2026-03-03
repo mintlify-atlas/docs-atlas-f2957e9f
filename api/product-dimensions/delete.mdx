@@ -1,0 +1,65 @@
+---
+title: "Delete Product Dimensions"
+description: "Delete a product dimensions record"
+---
+
+## Delete Product Dimensions
+
+Delete a product dimensions record from the system.
+
+### Endpoint
+
+```
+DELETE /api/v1/product-dimensions/{id}
+```
+
+### Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the product dimensions record to delete
+</ParamField>
+
+### Response
+
+This endpoint returns no content on success.
+
+### Status Codes
+
+<ResponseField name="204" type="No Content">
+  Product dimensions successfully deleted
+</ResponseField>
+
+<ResponseField name="404" type="Not Found">
+  Product dimensions not found
+</ResponseField>
+
+### Example Request
+
+```bash
+curl -X DELETE https://api.example.com/api/v1/product-dimensions/1 \
+  -H "Content-Type: application/json"
+```
+
+### Example Response
+
+On success, the endpoint returns HTTP status 204 with no response body.
+
+### Error Response
+
+```json
+{
+  "status": 404,
+  "error": "Not Found",
+  "message": "Product dimensions not found with id: 1"
+}
+```
+
+### Notes
+
+<Note>
+  Deleting product dimensions is permanent and cannot be undone. Make sure you want to delete the record before making this request.
+</Note>
+
+<Warning>
+  If the product dimensions are associated with a product, deleting them may affect product information displays. Consider the impact on related data before deletion.
+</Warning>

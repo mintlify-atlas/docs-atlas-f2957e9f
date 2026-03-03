@@ -1,0 +1,111 @@
+---
+title: List Categories
+description: Retrieve all categories with optional pagination support
+---
+
+# List Categories
+
+Retrieve a list of all categories in the system. This endpoint supports both full listing and paginated results.
+
+## Endpoint
+
+```
+GET /api/v1/categories
+```
+
+Returns all categories without pagination.
+
+## Paginated Endpoint
+
+```
+GET /api/v1/categories/pagination
+```
+
+Returns categories with pagination support.
+
+## Query Parameters
+
+<ParamField query="page" type="integer" default="0">
+  The page number to retrieve (zero-indexed)
+</ParamField>
+
+<ParamField query="pageSize" type="integer" default="10">
+  The number of categories to return per page
+</ParamField>
+
+## Response
+
+Returns an array of category objects.
+
+<ResponseField name="id" type="integer">
+  Unique identifier for the category
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The category name
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Detailed description of the category
+</ResponseField>
+
+<ResponseField name="parentId" type="integer">
+  ID of the parent category (null for main categories)
+</ResponseField>
+
+<ResponseField name="isActive" type="boolean">
+  Whether the category is currently active
+</ResponseField>
+
+<ResponseField name="product_ids" type="array">
+  List of product IDs associated with this category
+</ResponseField>
+
+<ResponseField name="subcategory_ids" type="array">
+  List of subcategory IDs that belong to this category
+</ResponseField>
+
+## Status Codes
+
+- `200` - Success, returns array of categories
+
+## Examples
+
+### Get all categories
+
+```bash
+curl -X GET "https://api.example.com/api/v1/categories" \
+  -H "Content-Type: application/json"
+```
+
+### Get categories with pagination
+
+```bash
+curl -X GET "https://api.example.com/api/v1/categories/pagination?page=0&pageSize=20" \
+  -H "Content-Type: application/json"
+```
+
+### Response Example
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Living Room",
+    "description": "Furniture for living spaces",
+    "parentId": null,
+    "isActive": true,
+    "product_ids": [101, 102, 103],
+    "subcategory_ids": [10, 11]
+  },
+  {
+    "id": 10,
+    "name": "Sofas",
+    "description": "Comfortable seating furniture",
+    "parentId": 1,
+    "isActive": true,
+    "product_ids": [201, 202],
+    "subcategory_ids": []
+  }
+]
+```

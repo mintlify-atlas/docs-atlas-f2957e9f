@@ -1,0 +1,129 @@
+---
+title: 'Update Product Review'
+description: 'Update an existing product review'
+---
+
+## Endpoint
+
+```
+PUT /api/v1/product-reviews/{id}
+```
+
+Update an existing product review.
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the product review to update
+</ParamField>
+
+## Request Body
+
+<ParamField body="productId" type="integer" required>
+  ID of the product being reviewed
+</ParamField>
+
+<ParamField body="userId" type="integer" required>
+  ID of the user who created the review
+</ParamField>
+
+<ParamField body="rating" type="integer" required>
+  Rating given to the product (typically 1-5)
+</ParamField>
+
+<ParamField body="comment" type="string">
+  Text comment or review description
+</ParamField>
+
+## Response
+
+Returns the updated product review object.
+
+<ResponseField name="id" type="integer" required>
+  Unique identifier for the review
+</ResponseField>
+
+<ResponseField name="productId" type="integer" required>
+  ID of the product being reviewed
+</ResponseField>
+
+<ResponseField name="userId" type="integer" required>
+  ID of the user who created the review
+</ResponseField>
+
+<ResponseField name="rating" type="integer" required>
+  Rating given to the product
+</ResponseField>
+
+<ResponseField name="comment" type="string">
+  Text comment or review description
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  Timestamp when the review was originally created (ISO 8601 format)
+</ResponseField>
+
+## Status Codes
+
+<ResponseField name="200" type="OK">
+  Product review successfully updated
+</ResponseField>
+
+<ResponseField name="400" type="Bad Request">
+  Invalid request body or validation error
+</ResponseField>
+
+<ResponseField name="404" type="Not Found">
+  Product review not found
+</ResponseField>
+
+## Example Request
+
+```bash
+curl -X PUT "https://api.example.com/api/v1/product-reviews/1" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": 101,
+    "userId": 501,
+    "rating": 4,
+    "comment": "Updated review: Good quality sofa, but the color was slightly different than expected."
+  }'
+```
+
+## Example Response
+
+```json
+{
+  "id": 1,
+  "productId": 101,
+  "userId": 501,
+  "rating": 4,
+  "comment": "Updated review: Good quality sofa, but the color was slightly different than expected.",
+  "createdAt": "2024-01-15T10:30:00"
+}
+```
+
+## Error Response
+
+When a product review is not found:
+
+```json
+{
+  "status": 404,
+  "error": "Not Found",
+  "message": "Product review not found with id: 999"
+}
+```
+
+## Validation Rules
+
+- `productId` is required and must be a valid integer
+- `userId` is required and must be a valid integer
+- `rating` is required and must be a valid integer
+- `comment` is optional but should be a string if provided
+
+## Notes
+
+- The `createdAt` timestamp is not modified during updates
+- All fields in the request body are required, even if only updating specific fields
+- The review ID in the path parameter must match an existing review

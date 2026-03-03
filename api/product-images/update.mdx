@@ -1,0 +1,277 @@
+---
+title: "Update Product Image"
+description: "Modify an existing product image's properties"
+---
+
+<RequestExample>
+```bash cURL
+curl -X PUT "https://api.example.com/api/v1/product-images/1" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": 101,
+    "imageUrl": "https://example.com/images/sofa-front-updated.jpg",
+    "altText": "Modern grey sofa - updated front view",
+    "displayOrder": 1
+  }'
+```
+</RequestExample>
+
+Updates an existing product image with the provided details.
+
+## Method and Path
+
+```
+PUT /api/v1/product-images/{id}
+```
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  The unique identifier of the product image to update
+</ParamField>
+
+## Request Body
+
+<ParamField body="productId" type="integer" required>
+  ID of the product this image belongs to
+</ParamField>
+
+<ParamField body="imageUrl" type="string" required>
+  URL of the product image. Must be a valid and accessible URL.
+</ParamField>
+
+<ParamField body="altText" type="string">
+  Alternative text description for accessibility
+</ParamField>
+
+<ParamField body="displayOrder" type="integer">
+  Order in which the image should be displayed. Lower numbers appear first.
+</ParamField>
+
+## Response
+
+<ResponseField name="ProductImageResponse" type="object">
+  The updated product image object
+  
+  <Expandable title="properties">
+    <ResponseField name="id" type="integer">
+      Unique identifier for the product image
+    </ResponseField>
+    
+    <ResponseField name="productId" type="integer">
+      ID of the product this image belongs to
+    </ResponseField>
+    
+    <ResponseField name="imageUrl" type="string">
+      URL of the product image
+    </ResponseField>
+    
+    <ResponseField name="altText" type="string">
+      Alternative text description for accessibility
+    </ResponseField>
+    
+    <ResponseField name="displayOrder" type="integer">
+      Order in which the image should be displayed
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Response Codes
+
+<ResponseField name="200" type="OK">
+  Product image successfully updated
+</ResponseField>
+
+<ResponseField name="400" type="Bad Request">
+  Invalid request body or validation error
+</ResponseField>
+
+<ResponseField name="404" type="Not Found">
+  Product image with the specified ID was not found
+</ResponseField>
+
+## Request Example
+
+```json
+{
+  "productId": 101,
+  "imageUrl": "https://example.com/images/sofa-front-updated.jpg",
+  "altText": "Modern grey sofa - updated front view",
+  "displayOrder": 1
+}
+```
+
+## Response Example
+
+```json
+{
+  "id": 1,
+  "productId": 101,
+  "imageUrl": "https://example.com/images/sofa-front-updated.jpg",
+  "altText": "Modern grey sofa - updated front view",
+  "displayOrder": 1
+}
+```
+
+## Error Response Examples
+
+### Validation Error
+
+```json
+{
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Validation failed",
+  "errors": [
+    {
+      "field": "imageUrl",
+      "message": "Image URL is required"
+    }
+  ]
+}
+```
+
+### Not Found Error
+
+```json
+{
+  "status": 404,
+  "error": "Not Found",
+  "message": "Product image not found with id: 999"
+}
+```
+
+## Usage Examples
+
+### Update Image URL
+
+```bash
+curl -X PUT "https://api.example.com/api/v1/product-images/1" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": 101,
+    "imageUrl": "https://example.com/images/sofa-new-photo.jpg",
+    "altText": "Modern grey sofa - front view",
+    "displayOrder": 1
+  }'
+```
+
+### Update Alt Text
+
+```bash
+curl -X PUT "https://api.example.com/api/v1/product-images/1" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": 101,
+    "imageUrl": "https://example.com/images/sofa-front.jpg",
+    "altText": "Luxurious modern grey sofa with chrome legs - front view",
+    "displayOrder": 1
+  }'
+```
+
+### Update Display Order
+
+```bash
+curl -X PUT "https://api.example.com/api/v1/product-images/1" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": 101,
+    "imageUrl": "https://example.com/images/sofa-front.jpg",
+    "altText": "Modern grey sofa - front view",
+    "displayOrder": 3
+  }'
+```
+
+### Update Product Image with JavaScript
+
+```javascript
+const imageData = {
+  productId: 101,
+  imageUrl: 'https://example.com/images/sofa-front-updated.jpg',
+  altText: 'Modern grey sofa - updated front view',
+  displayOrder: 1
+};
+
+fetch('https://api.example.com/api/v1/product-images/1', {
+  method: 'PUT',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(imageData)
+})
+  .then(response => response.json())
+  .then(data => console.log('Updated:', data))
+  .catch(error => console.error('Error:', error));
+```
+
+### Update Product Image with Python
+
+```python
+import requests
+
+image_data = {
+    'productId': 101,
+    'imageUrl': 'https://example.com/images/sofa-front-updated.jpg',
+    'altText': 'Modern grey sofa - updated front view',
+    'displayOrder': 1
+}
+
+response = requests.put(
+    'https://api.example.com/api/v1/product-images/1',
+    json=image_data
+)
+
+if response.status_code == 200:
+    updated_image = response.json()
+    print(f"Updated image: {updated_image['imageUrl']}")
+else:
+    print(f"Error: {response.status_code}")
+```
+
+## Common Use Cases
+
+### Reorder Product Images
+
+Update the display order to change how images appear in the product gallery:
+
+```bash
+# Move an image to the first position
+curl -X PUT "https://api.example.com/api/v1/product-images/3" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": 101,
+    "imageUrl": "https://example.com/images/sofa-detail.jpg",
+    "altText": "Sofa detail view",
+    "displayOrder": 1
+  }'
+```
+
+### Update Image After Re-upload
+
+Change the URL after uploading a higher quality image:
+
+```bash
+curl -X PUT "https://api.example.com/api/v1/product-images/1" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": 101,
+    "imageUrl": "https://example.com/images/sofa-front-hq.jpg",
+    "altText": "Modern grey sofa - front view",
+    "displayOrder": 1
+  }'
+```
+
+### Improve Accessibility
+
+Enhance alt text for better SEO and accessibility:
+
+```bash
+curl -X PUT "https://api.example.com/api/v1/product-images/1" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": 101,
+    "imageUrl": "https://example.com/images/sofa-front.jpg",
+    "altText": "Contemporary grey upholstered three-seater sofa with brushed metal legs and plush cushions",
+    "displayOrder": 1
+  }'
+```

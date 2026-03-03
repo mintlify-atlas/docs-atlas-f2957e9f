@@ -1,0 +1,75 @@
+---
+title: Categories Overview
+description: Overview of the Categories resource for managing product categories and hierarchies
+---
+
+# Categories Overview
+
+The Categories resource allows you to manage product categories in a hierarchical structure. Categories can have parent-child relationships, enabling you to organize products into main categories and subcategories.
+
+## Category Hierarchy
+
+Categories support a parent-child hierarchy:
+
+- **Main Categories**: Categories without a parent (`parentId` is null)
+- **Subcategories**: Categories that belong to a parent category
+
+You can retrieve main categories using `/api/v1/categories/main` and subcategories for a specific parent using `/api/v1/categories/parent/{parentId}`.
+
+## Category Object
+
+A category contains the following information:
+
+<ResponseField name="id" type="integer" required>
+  Unique identifier for the category
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  The category name
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Detailed description of the category
+</ResponseField>
+
+<ResponseField name="parentId" type="integer">
+  ID of the parent category (null for main categories)
+</ResponseField>
+
+<ResponseField name="isActive" type="boolean">
+  Whether the category is currently active
+</ResponseField>
+
+<ResponseField name="product_ids" type="array">
+  List of product IDs associated with this category
+</ResponseField>
+
+<ResponseField name="subcategory_ids" type="array">
+  List of subcategory IDs that belong to this category
+</ResponseField>
+
+## Available Endpoints
+
+### CRUD Operations
+
+- [List all categories](/api/categories/list) - `GET /api/v1/categories`
+- [Get category by ID](/api/categories/get) - `GET /api/v1/categories/{id}`
+- [Create a category](/api/categories/create) - `POST /api/v1/categories`
+- [Update a category](/api/categories/update) - `PUT /api/v1/categories/{id}`
+- [Delete a category](/api/categories/delete) - `DELETE /api/v1/categories/{id}`
+
+### Search and Filter
+
+- [Search categories](/api/categories/search) - Various search endpoints for filtering categories
+
+## Common Use Cases
+
+### Creating a Category Hierarchy
+
+1. Create a main category (e.g., "Furniture")
+2. Use the returned category ID as `parentId` when creating subcategories (e.g., "Tables", "Chairs")
+3. Retrieve the hierarchy using `/main` and `/parent/{parentId}` endpoints
+
+### Managing Active Categories
+
+Categories have an `isActive` flag that allows you to enable or disable them without deletion. Use the `/active` endpoint to retrieve only active categories.

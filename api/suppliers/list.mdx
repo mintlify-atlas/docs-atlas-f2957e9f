@@ -1,0 +1,232 @@
+---
+title: List Suppliers
+description: Retrieve all suppliers or use pagination to get suppliers in batches
+---
+
+## List All Suppliers
+
+Retrieve a list of all suppliers in the system.
+
+### Endpoint
+
+```
+GET /api/v1/suppliers
+```
+
+### Response
+
+Returns an array of supplier objects.
+
+<ResponseField name="suppliers" type="array">
+  Array of supplier objects
+  
+  <ResponseField name="id" type="integer" required>
+    Unique identifier for the supplier
+  </ResponseField>
+  
+  <ResponseField name="name" type="string" required>
+    Name of the supplier
+  </ResponseField>
+  
+  <ResponseField name="contactEmail" type="string" required>
+    Contact email address
+  </ResponseField>
+  
+  <ResponseField name="contactPhone" type="string" required>
+    Contact phone number
+  </ResponseField>
+  
+  <ResponseField name="isActive" type="boolean" required>
+    Whether the supplier is currently active
+  </ResponseField>
+</ResponseField>
+
+### Example Request
+
+```bash
+curl https://api.example.com/api/v1/suppliers
+```
+
+### Example Response
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Premium Furniture Co.",
+    "contactEmail": "sales@premiumfurniture.com",
+    "contactPhone": "+1-555-0100",
+    "isActive": true
+  },
+  {
+    "id": 2,
+    "name": "Modern Design Suppliers",
+    "contactEmail": "contact@moderndesign.com",
+    "contactPhone": "+1-555-0200",
+    "isActive": true
+  },
+  {
+    "id": 3,
+    "name": "Classic Wood Inc.",
+    "contactEmail": "info@classicwood.com",
+    "contactPhone": "+1-555-0300",
+    "isActive": false
+  }
+]
+```
+
+### Status Codes
+
+- `200 OK` - Successfully retrieved the list of suppliers
+
+---
+
+## List Suppliers with Pagination
+
+Retrieve suppliers with pagination support for better performance with large datasets.
+
+### Endpoint
+
+```
+GET /api/v1/suppliers/pagination
+```
+
+### Query Parameters
+
+<ParamField query="page" type="integer" default="0">
+  Page number (zero-based index)
+</ParamField>
+
+<ParamField query="pageSize" type="integer" default="10">
+  Number of suppliers to return per page
+</ParamField>
+
+### Response
+
+Returns an array of supplier objects for the requested page.
+
+<ResponseField name="suppliers" type="array">
+  Array of supplier objects for the specified page
+  
+  <ResponseField name="id" type="integer" required>
+    Unique identifier for the supplier
+  </ResponseField>
+  
+  <ResponseField name="name" type="string" required>
+    Name of the supplier
+  </ResponseField>
+  
+  <ResponseField name="contactEmail" type="string" required>
+    Contact email address
+  </ResponseField>
+  
+  <ResponseField name="contactPhone" type="string" required>
+    Contact phone number
+  </ResponseField>
+  
+  <ResponseField name="isActive" type="boolean" required>
+    Whether the supplier is currently active
+  </ResponseField>
+</ResponseField>
+
+### Example Request
+
+```bash
+curl "https://api.example.com/api/v1/suppliers/pagination?page=0&pageSize=10"
+```
+
+### Example Response
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Premium Furniture Co.",
+    "contactEmail": "sales@premiumfurniture.com",
+    "contactPhone": "+1-555-0100",
+    "isActive": true
+  },
+  {
+    "id": 2,
+    "name": "Modern Design Suppliers",
+    "contactEmail": "contact@moderndesign.com",
+    "contactPhone": "+1-555-0200",
+    "isActive": true
+  }
+]
+```
+
+### Status Codes
+
+- `200 OK` - Successfully retrieved the paginated list of suppliers
+
+---
+
+## Get Active Suppliers Only
+
+Retrieve only suppliers that are currently active.
+
+### Endpoint
+
+```
+GET /api/v1/suppliers/active
+```
+
+### Response
+
+Returns an array of active supplier objects.
+
+<ResponseField name="suppliers" type="array">
+  Array of active supplier objects
+  
+  <ResponseField name="id" type="integer" required>
+    Unique identifier for the supplier
+  </ResponseField>
+  
+  <ResponseField name="name" type="string" required>
+    Name of the supplier
+  </ResponseField>
+  
+  <ResponseField name="contactEmail" type="string" required>
+    Contact email address
+  </ResponseField>
+  
+  <ResponseField name="contactPhone" type="string" required>
+    Contact phone number
+  </ResponseField>
+  
+  <ResponseField name="isActive" type="boolean" required>
+    Always true for this endpoint
+  </ResponseField>
+</ResponseField>
+
+### Example Request
+
+```bash
+curl https://api.example.com/api/v1/suppliers/active
+```
+
+### Example Response
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Premium Furniture Co.",
+    "contactEmail": "sales@premiumfurniture.com",
+    "contactPhone": "+1-555-0100",
+    "isActive": true
+  },
+  {
+    "id": 2,
+    "name": "Modern Design Suppliers",
+    "contactEmail": "contact@moderndesign.com",
+    "contactPhone": "+1-555-0200",
+    "isActive": true
+  }
+]
+```
+
+### Status Codes
+
+- `200 OK` - Successfully retrieved the list of active suppliers
